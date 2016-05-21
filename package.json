@@ -1,0 +1,25 @@
+{
+  "name": "expresskit",
+  "version": "1.0.0",
+  "description": "a toolkit for node express servers",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "server",
+    "toolkit",
+    "authorization",
+    "authentication",
+    "roles",
+    "resources",
+    "activities"
+  ],
+  "author": "Micah Williamson",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.13.4"
+  }
+}

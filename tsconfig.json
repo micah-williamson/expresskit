@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "system",
+    "moduleResolution": "node",
+    "declaration": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "noLib": false,
+    "experimentalDecorators": true,
+    "out": "./tmp.js"
+  },
+  "files": [
+    "typings/tsd.d.ts",
+    "index.ts"
+  ]
+}
