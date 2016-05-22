@@ -84,7 +84,7 @@ export default class RouteManager {
    */
   public static bindStaticPaths(application: any, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((path) => {
-      application.use(path.uri, application.static(path.path));
+      application.use(path.uri, express.static(path.path));
     });
   }
   
