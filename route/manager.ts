@@ -1,6 +1,13 @@
+declare var require: any;
+declare var __dirname: any;
+
 import {IProperty, PropertyType} from '../property';
+import {IStaticUriPath} from './static';
 import RequestHandlerService from './requestHandler';
 import AuthenticationManager from '../authentication/manager';
+
+var express = require('express');
+var path = require('path');
 
 export type RouteMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -16,7 +23,7 @@ export default class RouteManager {
   public static routes: IRoute[] = [];
 
   /**
-   * @description Registers a route to RouteManager.routes
+   * Registers a route to RouteManager.routes
    * @param {RouteMethod} method [description]
    * @param {string}      path   [description]
    * @param {Object}      object [description]
@@ -62,7 +69,7 @@ export default class RouteManager {
   }
 
   /**
-   * @description Binds the routes to the given express application
+   * Binds the routes to the given express application
    * @param {any} application [description]
    */
   public static bindRoutes(application: any) {
@@ -71,9 +78,29 @@ export default class RouteManager {
       expressMethod.call(application, route.path, RequestHandlerService.requestHandlerFactory(route));
     });
   }
+  
+  /**
+   * Given the static paths, uses express.static to bind static paths
+   */
+  public static bindStaticPaths(application: any, staticPaths: IStaticUriPath[]) {
+    staticPaths.forEach((path) => {
+      application.use(path.uri, application.static(path.path));
+    });
+  }
+  
+  /**
+   * Given the static paths, uses express.static to bind static paths
+   */
+  public static bindStaticFiles(application: any, staticPaths: IStaticUriPath[]) {
+    staticPaths.forEach((p) => {
+      application.get(p.uri, (req: any, res: any) => {
+        res.sendFile(path.resolve(__dirname + '/' + p.path));
+      });
+    });
+  }
 
   /**
-   * @description Gets the route registered to [method] => path
+   * Gets the route registered to [method] => path
    * @param {RouteMethod} method [description]
    * @param {string}      path   [description]
    */
@@ -90,7 +117,7 @@ export default class RouteManager {
   }
 
   /**
-   * @description Gets the route registered to [object].[method]
+   * Gets the route registered to [object].[method]
    * @param {any}    object [description]
    * @param {string} method [description]
    */
@@ -107,7 +134,7 @@ export default class RouteManager {
   }
 
   /**
-   * @description Returns the property from the route.properties given the type and name
+   * Returns the property from the route.properties given the type and name
    * @param {IRoute}            route [description]
    * @param {RoutePropertyType} type  [description]
    * @param {string}            name  [description]
@@ -125,7 +152,7 @@ export default class RouteManager {
   }
 
   /**
-   * @description Given a RouteMethod, returns the express application method
+   * Given a RouteMethod, returns the express application method
    * @param  {RouteMethod} method [description]
    * @return {any}                [description]
    */

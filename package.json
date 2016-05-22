@@ -1,6 +1,6 @@
 {
   "name": "expresskit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "a toolkit for node express servers",
   "main": "bld/index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "body-parser": "^1.15.1",
+    "compression": "^1.6.2",
     "express": "^4.13.4",
     "systemjs": "^0.19.28"
   }

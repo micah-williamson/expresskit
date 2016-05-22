@@ -41,13 +41,36 @@ npm install --save expresskit
 ```
 /
   index.ts <-- Here
+  /user
+    router.ts
 ```
 
 ```typescript
 import ExpressKit from 'expresskit';
+import 'user/router';
+
+ExpressKit.start();
+```
+
+#### Start Config
+
+There are a few configurable properties when you start the server.
+See the properties below and their default values-
+
+```typescript
+import ExpressKit from 'expresskit';
+import 'user/router';
 
 ExpressKit.start({
-  port: 8000
+  port: 80, // default: 8000
+  compression: true, // default: false
+  timezone: 'Z', // default: Z (GMT 0)
+  staticFiles: [
+   {uri: '/', path: 'client/index.html'} 
+  ], // default: []
+  staticPaths: [
+   {uri: '/assets', path: 'client/assets/'}, 
+  ] // default: []
 });
 ```
 
