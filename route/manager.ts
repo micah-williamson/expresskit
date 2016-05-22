@@ -1,4 +1,4 @@
-import {IRouteProperty, RoutePropertyType} from './property';
+import {IProperty, PropertyType} from '../property';
 import RequestHandlerService from './requestHandler';
 import AuthenticationManager from '../authentication/manager';
 
@@ -9,7 +9,7 @@ export interface IRoute {
   path: string;
   object: any;
   key: string;
-  properties: IRouteProperty[];
+  properties: IProperty[];
 }
 
 export default class RouteManager {
@@ -43,8 +43,8 @@ export default class RouteManager {
     }
   }
 
-  public static registerRouteProperty(object: any, method: string, property: IRouteProperty) {
-    let properties: IRouteProperty[] = object[method].properties = object[method].properties || [];
+  public static registerRouteProperty(object: any, method: string, property: IProperty) {
+    let properties: IProperty[] = object[method].properties = object[method].properties || [];
     let existingProperty = false;
 
     properties.forEach((prop) => {
@@ -69,41 +69,6 @@ export default class RouteManager {
     this.routes.forEach(route => {
       let expressMethod = this.getExpressMethod(application, route.method);
       expressMethod.call(application, route.path, RequestHandlerService.requestHandlerFactory(route));
-    });
-  }
-
-  /**
-   * @description Binds the route to the given express application
-   * @param {IRoute} route       [description]
-   * @param {any}    application [description]
-   */
-  private static bindRoute(route: IRoute, application: any) {
-    let authProperties: IRouteProperty[] = [];
-
-    route.properties.forEach((prop) => {
-      if(prop.type === RoutePropertyType.Auth) {
-        authProperties.push(prop);
-      }
-    });
-
-    this.validateAuthProperties(route, authProperties);
-  }
-
-  /**
-   * @description Ensures the auth properties given are registered authentication resources
-   * @param {IRouteProperty[]} authProperties [description]
-   */
-  private static validateAuthProperties(route: IRoute, authProperties: IRouteProperty[]) {
-    authProperties.forEach((prop) => {
-      if(!prop.name) {
-        if(!AuthenticationManager.hasDefault()) {
-          throw new Error(`Unable to resolve no-named Auth property on route: ${route.method} => ${route.path}. There is no registered default authentication resource.`);
-        }
-      } else {
-        if(!AuthenticationManager.getResourceByName(prop.name)) {
-          throw new Error(`Unable to resolve Auth property ('${prop.name}') on route: ${route.method} => ${route.path}. There is no authentication resource registered by this name.`);
-        }
-      }
     });
   }
 
@@ -147,8 +112,8 @@ export default class RouteManager {
    * @param {RoutePropertyType} type  [description]
    * @param {string}            name  [description]
    */
-  public static getRouteProperty(route: IRoute, type: RoutePropertyType, name: string) {
-    let property: IRouteProperty;
+  public static getRouteProperty(route: IRoute, type: PropertyType, name: string) {
+    let property: IProperty;
 
     route.properties.forEach((prop) => {
       if(prop.type === type && prop.name === name) {

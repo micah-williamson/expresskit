@@ -1,6 +1,6 @@
 import {IRoute} from './manager';
 import PropertyManager from '../property/manager';
-import ResponseHandler from './responseHandler';
+import {ResponseType, Response, default as ResponseHandler} from './responseHandler';
 import RequestConfig from '../request';
 
 export interface IRequestHandler {
@@ -29,17 +29,24 @@ export default class RequestHandlerService {
    * @param {IRoute} route [description]
    */
   public static requestHandlerFactory(route: IRoute): IRequestHandler {
-    return (request: any, response: any) => {
+    return (request: any, expressResponse: any) => {
       let config = this.generateRequestConfig(request);
       let properties = PropertyManager.getProperties(route.object, route.key);
-      let propertyValues = PropertyManager.getPropertyValues(properties, config);
+      PropertyManager.getPropertyValues(properties, config).then((response: Response) => {
+        if(response.type === ResponseType.Success) {
+          let object = route.object;
+          let method = route.key;
+          let objectMethod = object[method];
 
-      let object = route.object;
-      let method = route.key;
-      let objectMethod = object[method];
+          let data = objectMethod.apply(object, response.data);
 
-      let res = objectMethod.apply(object, propertyValues);
-      ResponseHandler.handleResponse(route, response, res);
+          ResponseHandler.handleResponse(route, expressResponse, data);
+        } else {
+          ResponseHandler.handleResponse(route, expressResponse, response);
+        }
+      }).catch((response: Response) => {
+        ResponseHandler.handleResponse(route, expressResponse, ResponseHandler.convertErrorResponse(response));
+      });
     }
   }
 

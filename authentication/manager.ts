@@ -7,7 +7,9 @@ export class IAuthenticationResource {
 
   public isDefault: boolean = false;
 
-  public resolve: AutheticationResourceResolver;
+  public object: any;
+
+  public method: string;
 }
 
 export default class AuthenticationManager {
@@ -22,17 +24,12 @@ export default class AuthenticationManager {
     let namedResource = this.getResourceByName(resource.name);
 
     if(resource.isDefault && defaultResource) {
-      let constructorName = (<any>resource).prototype.constructor.name;
-      let defaultConstructorName = (<any>defaultResource).prototype.constructor.name;
-
-      throw new Error(`Unable to register authentication resource '${constructorName}' as a default authentication resource. '${defaultConstructorName}' is already the default authentication resource.`);
+      throw new Error(`Unable to register authentication at ${resource.object.prototype.constructor.name}.${resource.method} as a default authentication resolution method. ${defaultResource.object.prototype.constructor.name}.${defaultResource.method} is already the default authentication method.`);
     }
 
     if(namedResource) {
-      let constructorName = (<any>resource).prototype.constructor.name;
-      let namedConstructorName = (<any>namedResource).prototype.constructor.name;
-
-      throw new Error(`Unable to register authentication resource '${constructorName}' with the name '${resource.name}'. '${namedConstructorName}' has already registered this name.`);
+      console.log(resource.object.prototype);
+      throw new Error(`Unable to register authentication at ${resource.object.prototype.constructor.name}.${resource.method} with the name '${resource.name}'. ${namedResource.object.prototype.constructor.name}.${namedResource.method} has already registered this name.`);
     }
 
     this.resources.push(resource);

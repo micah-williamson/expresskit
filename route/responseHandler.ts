@@ -1,45 +1,54 @@
 import {IRoute} from './manager';
 
-interface RequestResponse {
-  httpCode: number;
-  message: any;
-}
+export enum ResponseType {Success, Error};
 
-interface RequestError {
-  httpCode: number;
-  message: any;
+export class Response {
+  public type: ResponseType;
+
+  public constructor(public httpCode: number, public data: any) {
+    if(httpCode >= 400) {
+      this.type = ResponseType.Error;
+    } else {
+      this.type = ResponseType.Success;
+    }
+  }
 }
 
 export default class ResponseHandlerService {
 
   public static handleResponse(route: IRoute, expressResponse: any, methodResponse: any) {
-    if(methodResponse.then) {
+    if(methodResponse && methodResponse.then) {
       methodResponse.then((payload: any) => {
-        this.handleResponseSuccess(route, expressResponse, payload);
+        let response = this.convertSuccessResponse(payload);
+        this.sendResponse(response, expressResponse);
       }).catch((payload: any) => {
-        this.handleResponseError(route, expressResponse, payload);
+        let response = this.convertErrorResponse(payload);
+        this.sendResponse(response, expressResponse);
       });
     } else {
-      this.handleResponseSuccess(route, expressResponse, methodResponse);
+      let response = this.convertSuccessResponse(methodResponse);
+      this.sendResponse(response, expressResponse);
     }
   }
 
-  private static handleResponseSuccess(route: IRoute, expressResponse: any, responsePayload: any) {
-    let response: RequestResponse = {
-      httpCode: 200,
-      message: responsePayload
-    };
+  public static convertSuccessResponse(data: any): Response {
+    if(data instanceof Response) {
+      return data;
+    }
 
-    expressResponse.status(response.httpCode).send(response.message);
+    return new Response(data !== undefined ? 200 : 204, data);
   }
 
-  private static handleResponseError(route: IRoute, expressResponse: any, errorPayload: any) {
-    let response: RequestResponse = {
-      httpCode: 500,
-      message: errorPayload
-    };
+  public static convertErrorResponse(data: any): Response {
+    if(data instanceof Response) {
+      return data;
+    }
 
-    expressResponse.status(response.httpCode).send(response.message);
+    return new Response(500, data);
+  }
+
+  private static sendResponse(response: Response, expressResponse: any) {
+    expressResponse.status(response.httpCode).send(response.data);
   }
 
 }

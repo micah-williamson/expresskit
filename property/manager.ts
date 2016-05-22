@@ -1,59 +1,190 @@
 import {IProperty, PropertyType} from './index';
 import RequestConfig from '../request';
-import ResponseHandler from '../route/responseHandler';
-import AuthenticationManager from '../authentication/manager';
+import {Response, ResponseType, default as ResponseHandler} from '../route/responseHandler';
+import {IAuthenticationResource, default as AuthenticationManager} from '../authentication/manager';
 
 export default class PropertyManager {
   public static properties: IProperty[] = [];
 
-  public static registerProperty(binding: IProperty) {
+  /**
+   * Attempts to register the given property
+   * 
+   * @param {IProperty}
+   */
+  public static registerProperty(property: IProperty) {
+    let existingProperty = this.getProperty(property.object, property.method, property.name, property.type);
+    if(existingProperty) {
+      throw new Error(`Unable to register Property (type:'${property.type}') '${property.name}' to ${property.object.prototype.constructor.name}.${property.method}. This property is already registered to this class method.`);
+    }
 
+    this.properties.push(property);
   }
 
   /**
-   * @description Given the route and the requestConfig, returns an array of values
-   *              that can be used to call the route method via `apply`.
+   * Given the route and the requestConfig, returns an array of values
+   *   that can be used to call the route method via `apply`.
+   *   
    * @param {IRoute}        route  [description]
    * @param {RequestConfig} config [description]
    */
   public static getPropertyValues(properties: IProperty[], config: RequestConfig) {
-    let returnValues: any[] = [];
+    let returnPromises: Promise<any>[] = [];
 
     properties.forEach((prop) => {
       switch(prop.type) {
+        case PropertyType.Body:
+          returnPromises[prop.index] = Promise.resolve(config.request.body);
+          break;
         case PropertyType.Param:
-          returnValues[prop.index] = config.params[prop.name];
+          returnPromises[prop.index] = this.resolveParam(prop, config);
           break;
         case PropertyType.Query:
-          returnValues[prop.index] = config.query[prop.name];
+          returnPromises[prop.index] = this.resolveQuery(prop, config);
           break;
         case PropertyType.Header:
-          returnValues[prop.index] = config.request.header(prop.name);
+          returnPromises[prop.index] = this.resolveHeader(prop, config);
           break;
         case PropertyType.Auth:
-          returnValues[prop.index] = this.resolveAuthType(prop, config);
+          returnPromises[prop.index] = Promise.resolve(this.resolveAuthentication(prop, config));
           break;
       }
     });
 
-    return returnValues;
-  }
-
-  public static resolveAuthType(prop: IProperty, config: RequestConfig): {
-    let name = prop.name;
-    let authResource = AuthenticationManager.getResourceByName(name);
-
-    let propertyValues = this.getProperties(authResource, 'resolve');
-    let properties = this.getPropertyValues(propertyValues, config);
-
-    let response = authResource.resolve.apply(authResource, properties);
-    if(response.then) {
-      return response.then;
+    let returnValues: any[] = [];
+    for(var i = 0; i < returnPromises.length; i++) {
+      (function(i: number, promise: Promise<any>) {
+        promise.then((val: any) => {
+          return returnValues[i] = val;
+        });
+      })(i, returnPromises[i]);
     }
 
-    return new Promise((r, r2) => {})
+
+    return Promise.all(returnPromises).then(() => {
+      for(var i = 0; i < returnValues.length; i++) {
+        let returnValue = returnValues[i];
+      }
+
+      return new Response(200, returnValues);
+    });
   }
 
+  /**
+   * Resolves the query
+   * 
+   * @param  {IProperty}
+   * @param  {RequestConfig}
+   * @return {Promise<any>}
+   */
+  private static resolveQuery(property: IProperty, config: RequestConfig): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let val = config.request.query[property.name];
+
+      if(val) {
+        resolve(val);
+      } else {
+        if(property.optional) {
+          resolve();
+        } else if (property.defaultValue !== undefined) {
+          resolve(property.defaultValue);
+        } else {
+          reject(new Response(400, `Required query parameter missing: ${property.name}`));
+        }
+      }
+    });
+  }
+
+  /**
+   * Resolves the param
+   * 
+   * @param  {IProperty}
+   * @param  {RequestConfig}
+   * @return {Promise<any>}
+   */
+  private static resolveParam(property: IProperty, config: RequestConfig): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let val = config.request.params[property.name];
+
+      if(val) {
+        resolve(val);
+      } else {
+        if(property.optional) {
+          resolve();
+        } else if(property.defaultValue !== undefined) {
+          resolve(property.defaultValue);
+        } else {
+          reject(new Response(400, `Required parameter missing: ${property.name}`));
+        }
+      }
+    });
+  }
+
+  /**
+   * Resolves the header
+   * 
+   * @param  {IProperty}
+   * @param  {RequestConfig}
+   * @return {Promise<any>}
+   */
+  private static resolveHeader(property: IProperty, config: RequestConfig): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let val = config.request.header(property.name);
+
+      if(val) {
+        resolve(val);
+      } else {
+        if(property.optional) {
+          resolve();
+        } else if(property.defaultValue !== undefined) {
+          resolve(property.defaultValue);
+        } else {
+          reject(new Response(400, `Required header missing: ${property.name}`));
+        }
+      }
+    });
+  }
+
+  /**
+   * Custom method for resolving auth properties
+   * 
+   * @param  {IProperty}
+   * @param  {RequestConfig}
+   * @return {Promise<any>}
+   */
+  public static resolveAuthentication(prop: IProperty, config: RequestConfig): Promise<any> {
+    let name = prop.name;
+    let authResource: IAuthenticationResource;
+
+    if(name) {
+      authResource = AuthenticationManager.getResourceByName(name);
+    } else {
+      authResource = AuthenticationManager.getDefault();
+    }
+    
+
+    let propertyValues = this.getProperties(authResource.object, authResource.method);
+    return this.getPropertyValues(propertyValues, config).then((response: Response) => {
+      if(response.type === ResponseType.Error) {
+        return response;
+      }
+
+      return Promise.resolve(authResource.object[authResource.method].apply(authResource, response.data))
+                .catch((response: any) => {
+                  // If a Response wasn't returned, force a 401 response
+                  if(!(response instanceof Response)) {
+                    return new Response(401, response);
+                  }
+                });
+    });
+  }
+
+  /**
+   * Returns properties for ths given object.method
+   * 
+   * @param  {any}
+   * @param  {string}
+   * @return {IProperty[]}
+   */
   public static getProperties(object: any, method: string): IProperty[] {
     let properties: IProperty[] = [];
 
@@ -64,5 +195,24 @@ export default class PropertyManager {
     });
 
     return properties;
+  }
+
+  /**
+   * Returns the property from the method with the given object.method name and type
+   * 
+   * @param {any}
+   * @param {string}
+   * @param {PropertyType}
+   */
+  public static getProperty(object: any, method: string, name: string, type: PropertyType) {
+    let property: IProperty = null;
+
+    this.properties.forEach((prop) => {
+      if(prop.object === object && prop.method === method && prop.name === name && prop.type === type) {
+        property = prop;
+      }
+    });
+
+    return property;
   }
 }
