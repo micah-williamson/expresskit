@@ -28,7 +28,11 @@ export default class ExpressKit {
 
   public static server = express();
 
-  public static start(config: IExpressKitConfig = {}) {
+  public static start(config?: IExpressKitConfig ) {
+    // TODO: es6 node does not support defaults in the arguments.
+    //       Once this becomes available use `= {}` as the default value
+    config = config || {}
+    
     process.env.TZ = config.timezone;
     
     this.server.use(bodyParser.json({ type: 'application/json' }));
