@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "system",
+    "module": "commonjs",
     "moduleResolution": "node",
     "declaration": false,
     "noImplicitAny": true,
     "removeComments": true,
     "noLib": false,
     "experimentalDecorators": true,
-    "out": "./tmp.js"
+    "outDir": "bld"
   },
   "files": [
     "typings/tsd.d.ts",

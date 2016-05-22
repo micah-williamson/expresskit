@@ -1,8 +1,8 @@
 {
   "name": "expresskit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a toolkit for node express servers",
-  "main": "index.ts",
+  "main": "bld/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
