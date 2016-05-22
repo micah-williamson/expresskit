@@ -27,7 +27,7 @@ export default class ExpressKit {
 
   public static server = express();
 
-  public static start(config: IExpressKitConfig) {
+  public static start(config: IExpressKitConfig = {}) {
     process.env.TZ = config.timezone;
     
     this.server.use(bodyParser.json({ type: 'application/json' }));
@@ -39,8 +39,8 @@ export default class ExpressKit {
       this.server.use(compression());
     }
 
-    RouteManager.bindStaticPaths(this.service, config.staticPaths);
-    RouteManager.bindStaticFiles(this.service, config.staticFiles);
+    RouteManager.bindStaticPaths(this.server, config.staticPaths);
+    RouteManager.bindStaticFiles(this.server, config.staticFiles);
     RouteManager.bindRoutes(this.server);
 
     this.server.listen(config.port, () => {
