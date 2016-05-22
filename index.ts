@@ -33,6 +33,8 @@ export default class ExpressKit {
     //       Once this becomes available use `= {}` as the default value
     config = config || {}
     
+    initDefaultExpressKitConfig(config);
+    
     process.env.TZ = config.timezone;
     
     this.server.use(bodyParser.json({ type: 'application/json' }));
