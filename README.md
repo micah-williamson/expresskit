@@ -21,7 +21,7 @@ npm install --save expresskit
 {
     "compilerOptions": {
         "target": "es6",
-        "module": "commonjs",
+        "module": "system",
         "moduleResolution": "node",
         "declaration": false,
         "noImplicitAny": true,
@@ -53,9 +53,28 @@ ExpressKit.start({
 
 ### Build and Run
 
+It is recommended that you create a `build.sh` script for this. But
+in these early stages of typescript and node, building requires a few
+steps. Everything must be built to a single file next to your `index.ts`
+source file. The reason is because typescript will also build the
+expresskit source. If you are building with commonjs then the expresskit
+node_modules directory will get build to your build directory. And
+in places where expresskit uses node `require` it will not be able
+to find the other node modules.
+
+Here is an example of my `build.sh` script using systemjs.
+
 ```
 tsc
-node bld/index.js
+build=`cat "build.js"`
+echo "var System = require('systemjs');" "$build" > "build.js";
+echo "System.import('index');" >> "build.js";
+```
+
+Then you can run the build file.
+
+```
+node build.js
 ```
 
 > Started server on port 8000
