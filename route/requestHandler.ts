@@ -1,6 +1,6 @@
 import {IRoute} from './manager';
 import PropertyManager from '../property/manager';
-import {IAuthorizationRule, default as AuthorizationManager} from '../authorization/manager';
+import {IRule, default as RuleManager} from '../rule/manager';
 import {ResponseType, Response, default as ResponseHandler} from './responseHandler';
 import RequestConfig from '../request';
 
@@ -32,10 +32,10 @@ export default class RequestHandlerService {
   public static requestHandlerFactory(route: IRoute): IRequestHandler {
     return (request: any, expressResponse: any) => {
       let config = this.generateRequestConfig(request);
-      let authorization = AuthorizationManager.getRule(route.object, route.key);
+      let rules = RuleManager.getRules(route.object, route.key);
       
-      if(authorization) {
-        this.verifyAuthorization(authorization, config).then(() => {
+      if(rules.length) {
+        this.verifyRules(rules, config).then(() => {
           this.runMethod(route, config, expressResponse);
         }).catch((response) => {
           ResponseHandler.handleResponse(route, expressResponse, response);
@@ -47,41 +47,62 @@ export default class RequestHandlerService {
   }
   
   /**
-   * Verifies at least one authorization role is valid
+   * Verifies all rules are met
    */
-  private static verifyAuthorization(authorization: IAuthorizationRule, config: RequestConfig): Promise<Response> {
+  private static verifyRules(rules: IRule[], config: RequestConfig): Promise<Response> {
+    let promises: Promise<Response>[] = [];
+    
+    rules.forEach((rule) => {
+      promises.push(this.verifyRule(rule, config));
+    });
+    
+    return Promise.all(promises).then(() => {
+      return new Response(200, 'Ok');
+    }).catch((response: Response) => {
+      return response;
+    });
+  }
+  
+  /**
+   * Verifies at least one rule is met
+   */
+  private static verifyRule(rule: IRule, config: RequestConfig): Promise<Response> {
     return new Promise((resolve, reject) => {
-      let name = authorization.name;
-      let roles = authorization.roles;
+      let group = rule.group;
+      let names = rule.names;
       let promises: Promise<Response>[] = [];
       let index = 0;
       
-      return this.verifyNextAuthorizationRole(name, roles, index, config).then(() => {
+      return this.verifyNextRule(group, names, index, config).then(() => {
         return true;
-      }).catch(() => {
-        return new Response(403, 'Not Authorized');
+      }).catch((response: Response) => {
+        if(response instanceof Response) {
+          return response;
+        }
+        
+        return new Response(500, 'One or more route rules were not satisfied but an error was not given.');
       }); 
     });
   }
   
   /**
-   * Given the name, the roles, and the index. Continues to try to authorize the request
-   * until one authorization role is satisfied or there are no more roles to try.
+   * Given the group, the name, and the index. Continues to try to validate a rule for the request
+   * until one rule is satisfied or there are no more rules to try.
    */
-  private static verifyNextAuthorizationRole(name: string, roles: string[], index: number, config: RequestConfig) {
+  private static verifyNextRule(group: string, names: string[], index: number, config: RequestConfig) {
     return new Promise((resolve, reject) => {
-      if(roles[index]) {
-        let resource = AuthorizationManager.getResourceByNameAndRole(name, roles[index]);
+      if(names[index]) {
+        let resource = RuleManager.getResourceByGroupAndName(group, names[index]);
         let properties = PropertyManager.getProperties(resource.object, resource.method);
-        let rolePromise = PropertyManager.getPropertyValues(properties, config).then((response: Response) => {
+        let rulePromise = PropertyManager.getPropertyValues(properties, config).then((response: Response) => {
           if(response.type === ResponseType.Success) {
             resource.object[resource.method].apply(resource.object, response.data).then(() => {
               resolve();
             }).catch(() => {
-              resolve(this.verifyNextAuthorizationRole(name, roles, index++, config));
+              resolve(this.verifyNextRule(group, names, index++, config));
             });
           } else {
-            resolve(this.verifyNextAuthorizationRole(name, roles, index++, config));
+            resolve(this.verifyNextRule(group, names, index++, config));
           }
         }); 
       } else {
