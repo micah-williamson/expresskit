@@ -1,4 +1,4 @@
-export class IRuleResource {
+export class IRuleHandler {
   public group: string;
 
   public name: string;
@@ -19,58 +19,58 @@ export class IRule {
 }
 
 export default class RuleManager {
-  public static resources: IRuleResource[] = [];
+  public static handlers: IRuleHandler[] = [];
   
   public static rules: IRule[] = [];
   
   /**
    * Registers the given authorization rule
    */
-  public static registerRuleResource(rule: IRule) {
+  public static registerRule(rule: IRule) {
     this.rules.push(rule);
   }
 
   /**
-   * Registers the given authorization resource
+   * Registers the given authorization handler
    */
-  public static registerAuthorizationResource(resource: IRuleResource) {
-    let namedResource = this.getResourceByGroupAndName(resource.group, resource.name);
+  public static registerRuleHandler(handler: IRuleHandler) {
+    let namedHandler = this.getHandlerByGroupAndName(handler.group, handler.name);
 
-    if(namedResource) {
-      throw new Error(`Unable to register rule at ${resource.object.prototype.constructor.name}.${resource.method} with the group '${resource.group}' and name '${resource.name}'. ${namedResource.object.prototype.constructor.name}.${namedResource.method} has already registered this group/name combination.`);
+    if(namedHandler) {
+      throw new Error(`Unable to register rule at ${handler.object.prototype.constructor.name}.${handler.method} with the group '${handler.group}' and name '${handler.name}'. ${namedHandler.object.prototype.constructor.name}.${namedHandler.method} has already registered this group/name combination.`);
     }
 
-    this.resources.push(resource);
+    this.handlers.push(handler);
   }
 
   /**
-   * Returns the authorization resource by name
+   * Returns the authorization handler by name
    */
-  public static getResourceByGroupAndName(group: string, name: string): IRuleResource {
-    let resource: IRuleResource = null;
+  public static getHandlerByGroupAndName(group: string, name: string): IRuleHandler {
+    let handler: IRuleHandler = null;
 
-    this.resources.forEach((res) => {
+    this.handlers.forEach((res) => {
       if(res.group === group && res.name === name) {
-        resource = res;
+        handler = res;
       }
     });
 
-    return resource;
+    return handler;
   }
   
   /**
-   * Returns the authorization resource bound to the given object and object method
+   * Returns the authorization handler bound to the given object and object method
    */
-  public static getRuleResource(object: any, method: string): IRuleResource {
-    let resource: IRuleResource = null;
+  public static getRuleHandler(object: any, method: string): IRuleHandler {
+    let handler: IRuleHandler = null;
 
-    this.resources.forEach((res) => {
+    this.handlers.forEach((res) => {
       if(res.object === object && res.method === method) {
-        resource = res;
+        handler = res;
       }
     });
 
-    return resource;
+    return handler;
   }
   
   /**

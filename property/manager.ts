@@ -1,7 +1,7 @@
 import {IProperty, PropertyType} from './index';
 import RequestConfig from '../request';
 import {Response, ResponseType, default as ResponseHandler} from '../route/responseHandler';
-import {IAuthenticationResource, default as AuthenticationManager} from '../authentication/manager';
+import {IAuthHandler, default as AuthManager} from '../auth/manager';
 
 export default class PropertyManager {
   public static properties: IProperty[] = [];
@@ -153,12 +153,12 @@ export default class PropertyManager {
    */
   public static resolveAuthentication(prop: IProperty, config: RequestConfig): Promise<any> {
     let name = prop.name;
-    let authResource: IAuthenticationResource;
+    let authResource: IAuthHandler;
 
     if(name) {
-      authResource = AuthenticationManager.getResourceByName(name);
+      authResource = AuthManager.getHandlerByName(name);
     } else {
-      authResource = AuthenticationManager.getDefault();
+      authResource = AuthManager.getDefault();
     }
     
 

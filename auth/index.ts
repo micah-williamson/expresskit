@@ -1,16 +1,16 @@
-import AuthenticationManager from './manager';
+import AuthManager from './manager';
 import {IProperty, PropertyType} from '../property';
 import PropertyManager from '../property/manager';
 
 export default function Auth(name?: string) {
   return function(object: any, method: string, index: number) {
     if(!name) {
-      if(!AuthenticationManager.hasDefault()) {
-        throw new Error(`Unable to resolve no-named Auth property on ${object.prototype.constructor.name}.${method}. There is no registered default authentication resource.`);
+      if(!AuthManager.hasDefault()) {
+        throw new Error(`Unable to resolve no-named Auth property on ${object.prototype.constructor.name}.${method}. There is no registered default authentication handler.`);
       }
     } else {
-      if(!AuthenticationManager.getResourceByName(name)) {
-        throw new Error(`Unable to resolve Auth property ('${name}') on ${object.prototype.constructor.name}.${method}. There is no authentication resource registered by this name.`);
+      if(!AuthManager.getHandlerByName(name)) {
+        throw new Error(`Unable to resolve Auth property ('${name}') on ${object.prototype.constructor.name}.${method}. There is no authentication handler registered by this name.`);
       }
     }
 

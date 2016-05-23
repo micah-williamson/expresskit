@@ -4,7 +4,7 @@ declare var __dirname: any;
 import {IProperty, PropertyType} from '../property';
 import {IStaticUriPath} from './static';
 import RequestHandlerService from './requestHandler';
-import AuthenticationManager from '../authentication/manager';
+import AuthManager from '../auth/manager';
 
 var express = require('express');
 var path = require('path');

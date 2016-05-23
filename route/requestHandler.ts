@@ -92,11 +92,11 @@ export default class RequestHandlerService {
   private static verifyNextRule(group: string, names: string[], index: number, config: RequestConfig) {
     return new Promise((resolve, reject) => {
       if(names[index]) {
-        let resource = RuleManager.getResourceByGroupAndName(group, names[index]);
-        let properties = PropertyManager.getProperties(resource.object, resource.method);
+        let handler = RuleManager.getHandlerByGroupAndName(group, names[index]);
+        let properties = PropertyManager.getProperties(handler.object, handler.method);
         let rulePromise = PropertyManager.getPropertyValues(properties, config).then((response: Response) => {
           if(response.type === ResponseType.Success) {
-            resource.object[resource.method].apply(resource.object, response.data).then(() => {
+            handler.object[handler.method].apply(handler.object, response.data).then(() => {
               resolve();
             }).catch(() => {
               resolve(this.verifyNextRule(group, names, index++, config));
