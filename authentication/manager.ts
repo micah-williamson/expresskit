@@ -28,7 +28,6 @@ export default class AuthenticationManager {
     }
 
     if(namedResource) {
-      console.log(resource.object.prototype);
       throw new Error(`Unable to register authentication at ${resource.object.prototype.constructor.name}.${resource.method} with the name '${resource.name}'. ${namedResource.object.prototype.constructor.name}.${namedResource.method} has already registered this name.`);
     }
 

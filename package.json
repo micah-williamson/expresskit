@@ -1,6 +1,6 @@
 {
   "name": "expresskit",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "a toolkit for node express servers",
   "main": "bld/index.js",
   "scripts": {
