@@ -1,7 +1,8 @@
 import {IProperty, PropertyType} from './index';
 import RequestConfig from '../request';
-import {Response, ResponseType, default as ResponseHandler} from '../route/responseHandler';
+import ResponseHandler from '../route/responseHandler';
 import {IAuthHandler, default as AuthManager} from '../auth/manager';
+import {default as Response, ResponseType} from '../route/response';
 import fatal from '../error';
 
 export default class PropertyManager {

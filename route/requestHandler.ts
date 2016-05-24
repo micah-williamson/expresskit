@@ -1,7 +1,8 @@
 import {IRoute} from './manager';
 import PropertyManager from '../property/manager';
 import {IRule, default as RuleManager} from '../rule/manager';
-import {ResponseType, Response, default as ResponseHandler} from './responseHandler';
+import ResponseHandler from './responseHandler';
+import {ResponseType, default as Response} from './response';
 import RequestConfig from '../request';
 
 export interface IRequestHandler {
