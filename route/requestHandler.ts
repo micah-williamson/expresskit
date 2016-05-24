@@ -58,8 +58,6 @@ export default class RequestHandlerService {
     
     return Promise.all(promises).then(() => {
       return new Response(200, 'Ok');
-    }).catch((response: Response) => {
-      return response;
     });
   }
   
@@ -73,14 +71,14 @@ export default class RequestHandlerService {
       let promises: Promise<Response>[] = [];
       let index = 0;
       
-      return this.verifyNextRule(group, names, index, config).then(() => {
-        return true;
+      this.verifyNextRule(group, names, index, config).then(() => {
+        resolve();
       }).catch((response: Response) => {
         if(response instanceof Response) {
-          return response;
+          reject(response);
         }
         
-        return new Response(500, 'One or more route rules were not satisfied but an error was not given.');
+        reject(new Response(500, 'One or more route rules were not satisfied. Error was not given.'));
       }); 
     });
   }
@@ -99,10 +97,10 @@ export default class RequestHandlerService {
             handler.object[handler.method].apply(handler.object, response.data).then(() => {
               resolve();
             }).catch(() => {
-              resolve(this.verifyNextRule(group, names, index++, config));
+              resolve(this.verifyNextRule(group, names, ++index, config));
             });
           } else {
-            resolve(this.verifyNextRule(group, names, index++, config));
+            resolve(this.verifyNextRule(group, names, ++index, config));
           }
         }); 
       } else {

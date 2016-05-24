@@ -2,6 +2,7 @@ import {IProperty, PropertyType} from './index';
 import RequestConfig from '../request';
 import {Response, ResponseType, default as ResponseHandler} from '../route/responseHandler';
 import {IAuthHandler, default as AuthManager} from '../auth/manager';
+import fatal from '../error';
 
 export default class PropertyManager {
   public static properties: IProperty[] = [];
@@ -14,7 +15,7 @@ export default class PropertyManager {
   public static registerProperty(property: IProperty) {
     let existingProperty = this.getProperty(property.object, property.method, property.name, property.type);
     if(existingProperty) {
-      throw new Error(`Unable to register Property (type:'${property.type}') '${property.name}' to ${property.object.prototype.constructor.name}.${property.method}. This property is already registered to this class method.`);
+      fatal(new Error(`Unable to register Property (type:'${property.type}') '${property.name}' to ${property.object.prototype.constructor.name}.${property.method}. This property is already registered to this class method.`));
     }
 
     this.properties.push(property);

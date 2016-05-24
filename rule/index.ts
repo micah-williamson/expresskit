@@ -1,4 +1,5 @@
 import RuleManager from './manager';
+import fatal from '../error';
 
 export default function Rule(group: string, names: string) {
   return function(object: any, method: string) {
@@ -12,14 +13,14 @@ export default function Rule(group: string, names: string) {
     }
     
     if(!finalNames.length) {
-      throw new Error(`Unable to register rule group '${group}' on ${object.prototype.constructor.name}.${method}. No rule names found. Use: @RuleHandler('group', 'name1,name2')`);
+      fatal(new Error(`Unable to register rule group '${group}' on ${object.prototype.constructor.name}.${method}. No rule names found. Use: @RuleHandler('group', 'name1,name2')`));
     }
     
     namesArray.forEach((name) => {
       let ruleHandler = RuleManager.getHandlerByGroupAndName(group, name);
       
       if(!ruleHandler) {
-        throw new Error(`Unable to register rule ${group}.${name} to ${object.prototype.constructor.name}.${method}. This group.name combination does not exist.`);
+        fatal(new Error(`Unable to register rule ${group}.${name} to ${object.prototype.constructor.name}.${method}. This group.name combination does not exist.`));
       }
     });
     

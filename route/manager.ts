@@ -5,6 +5,7 @@ import {IProperty, PropertyType} from '../property';
 import {IStaticUriPath} from './static';
 import RequestHandlerService from './requestHandler';
 import AuthManager from '../auth/manager';
+import fatal from '../error';
 
 var express = require('express');
 var path = require('path');
@@ -42,11 +43,11 @@ export default class RouteManager {
         });
       } else {
         let error = `Unable to register route: ${method} > ${path} to ${object.prototype.constructor.name}.${key}. This path is already registered to ${existingRoute.object.prototype.constructor.name}.${key}`;
-        throw new Error(error);
+        fatal(new Error(error));
       }
     } else {
       let error = `Unable to register route: ${method} > ${path} to ${object.prototype.constructor.name}.${key}. ${key} does not exist on ${object.prototype.constructor.name}. Instead of calling RouteManager.registerRoute directly, use the @Route decorator.`;
-      throw new Error(error);
+      fatal(new Error(error));
     }
   }
 
@@ -64,7 +65,7 @@ export default class RouteManager {
       properties.push(property);
     } else {
       let error = `Unable to register signature property: ${property.type} ${property.name} to ${object.prototype.constructor.name}.${method}. This Type/Name combination already exists on the route.`;
-      throw new Error(error);
+      fatal(new Error(error));
     }
   }
 

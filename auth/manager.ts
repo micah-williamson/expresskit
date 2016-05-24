@@ -1,3 +1,5 @@
+import fatal from '../error';
+
 export class IAuthHandler {
   public name: string;
 
@@ -20,11 +22,11 @@ export default class AuthManager {
     let namedHandler = this.getHandlerByName(handler.name);
 
     if(handler.isDefault && defaultHandler) {
-      throw new Error(`Unable to register authentication handler at ${handler.object.prototype.constructor.name}.${handler.method} as a default authentication resolution method. ${defaultHandler.object.prototype.constructor.name}.${defaultHandler.method} is already the default authentication method.`);
+      fatal(new Error(`Unable to register authentication handler at ${handler.object.prototype.constructor.name}.${handler.method} as a default authentication resolution method. ${defaultHandler.object.prototype.constructor.name}.${defaultHandler.method} is already the default authentication method.`));
     }
 
     if(namedHandler) {
-      throw new Error(`Unable to register authentication handler at ${handler.object.prototype.constructor.name}.${handler.method} with the name '${handler.name}'. ${namedHandler.object.prototype.constructor.name}.${namedHandler.method} has already registered this name.`);
+      fatal(new Error(`Unable to register authentication handler at ${handler.object.prototype.constructor.name}.${handler.method} with the name '${handler.name}'. ${namedHandler.object.prototype.constructor.name}.${namedHandler.method} has already registered this name.`));
     }
 
     this.handlers.push(handler);

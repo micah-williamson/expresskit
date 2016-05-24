@@ -1,3 +1,5 @@
+import fatal from '../error';
+
 export class IRuleHandler {
   public group: string;
 
@@ -37,7 +39,7 @@ export default class RuleManager {
     let namedHandler = this.getHandlerByGroupAndName(handler.group, handler.name);
 
     if(namedHandler) {
-      throw new Error(`Unable to register rule at ${handler.object.prototype.constructor.name}.${handler.method} with the group '${handler.group}' and name '${handler.name}'. ${namedHandler.object.prototype.constructor.name}.${namedHandler.method} has already registered this group/name combination.`);
+      fatal(new Error(`Unable to register rule at ${handler.object.prototype.constructor.name}.${handler.method} with the group '${handler.group}' and name '${handler.name}'. ${namedHandler.object.prototype.constructor.name}.${namedHandler.method} has already registered this group/name combination.`));
     }
 
     this.handlers.push(handler);
