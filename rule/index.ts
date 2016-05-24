@@ -1,7 +1,7 @@
 import RuleManager from './manager';
 
 export default function Rule(group: string, names: string) {
-  return function(object: any, method: string, index: number) {
+  return function(object: any, method: string) {
     let namesArray = names.split(/,|\s+/);
     let finalNames: string[] = [];
     for(var i = 0; i < namesArray.length; i++) {
