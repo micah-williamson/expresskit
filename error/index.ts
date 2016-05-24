@@ -1,4 +1,4 @@
-declare var process;
+declare var process: any;
 
 export default function fatal(err: Error) {
   console.error(err);
