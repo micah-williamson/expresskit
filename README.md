@@ -130,7 +130,6 @@ error code.
 
 ```typescript
 import Route from 'expresskit/route';
-import {Response} from 'expresskit/route/responseHandler';
 
 export default class UserRouter {
   @Route('GET', '/user/:id')
@@ -180,7 +179,7 @@ the same.
 
 ```typescript
 import Route from 'expresskit/route';
-import {Response} from 'expresskit/route/responseHandler';
+import {Param, Query, Header} from 'expresskit/property';
 
 export default class UserRouter {
   @Route('GET', '/user/:id')
@@ -216,7 +215,6 @@ In `PUT` and `POST` calls there will probably be a body to the call. To retrieve
 
 ```typescript
 import Route from 'expresskit/route';
-import {Response} from 'expresskit/route/responseHandler';
 
 export default class UserRouter {
   @Route('PUT', '/user')
@@ -240,7 +238,7 @@ us give context to the request but provides a basic level of security.
 
 ```typescript
 import Route from 'expresskit/route';
-import {Response} from 'expresskit/route/responseHandler';
+import Auth from 'expresskit/auth';
 
 export default class UserRouter {
   @Route('GET', '/user')
@@ -251,12 +249,13 @@ export default class UserRouter {
 ```
 
 How is authentication described? This is up to the developer to implement using
-the `@Authentication()` decorator. Internally these are named as `Authentication Resources`. An Authentication Resource needs a name, in this case we'l name it 'User'. As most applications only have one Authentication Resource, we can set this as the default Authentication Resource by setting the optional second parameter of the decorator to `true`.
+the `@AuthHandler()` decorator. An Authentication Handler needs a name, in this case we'l name it 'User'. As most applications only have one Authentication Handler, we can set this as the default Authentication Handler by setting the optional second parameter of the decorator to `true`.
 
-Authentication Resource resolvers can be injected with route properties like route methods. So in our userAuthentication method we can easily obtain the Authorization header.
+Authentication Handler resolvers can be injected with route properties like route methods. So in our userAuthentication method we can easily obtain the Authorization header.
 
 ```typescript
-import Authentication from 'expresskit/authentication';
+import AuthHandler from 'expresskit/auth/handler';
+import Response from 'expresskit/route/response';
 import {Header} from 'expresskit/property';
 
 export default class User {
@@ -266,16 +265,72 @@ export default class User {
 
   public password: string;
 
-  @Authentication('User', true)
+  @AuthHandler('User', true)
   public static userAuthentication(@Header('Authorization') authorizationHeader: string): User {
     // use the authorization header to locate the correct user
     return new User();
+    
+    // or
+    return new Promise.resolve(new User());
+    
+    // or
+    return new Promise.reject(new Response(401, 'Not logged in'));
   }
 }
 ```
 
-Because this is the default Authentication Resource we can call it without naming it - `@Auth()`. If we had multiple Authentication Resources, or wanted to be verbose, we can call other resources by passing the name in Auth- `@Auth('User')`.
+Because this is the default Authentication Handler we can call it without naming it - `@Auth()`. If we had multiple Authentication Handlers, or wanted to be verbose, we can call other Handlers by passing the name in Auth- `@Auth('User')`.
 
 You can "Fail" authentication by returning nothing, returning a rejected promise, or by
 returning a `Response` with an error status. If authentication fails, and no `Response`
 is given, the request will fail with a `401 Unauthenticated` error code.
+
+## Rules and Authorization
+
+Don't confuse Authentication and Authorization. Use Authentication to identify the request, but just having an identity doesn't
+mean you are authorized to perform the action you are attempting to perform. For that we need Authorization- or `Rules` in 
+expresskit. Similar to Auth Handlers you must create a `Rule Handler`. A Rule Handler should return a resolved or rejected promise.
+When a promise is resolved, the rule is satisfied, when the promise is rejected, the rule has failed.
+
+```typescript
+import Auth from 'expresskit/auth';
+import RuleHandler from 'expresskit/rule/handler';
+import Response from 'expresskit/route/response';
+
+export default class UserService {
+  @RuleHandler('User', 'Owner')
+  public static isOwner(@Auth() user: User, @Body() update: User) {
+    if(user.id === update.id) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+      
+      // or
+      
+      return Promise.reject(new Response(403, `Not Authorized`)) 
+    }
+  }
+}
+```
+
+Once a rule handler is defined, it can be added to routes.
+
+```typescript
+import Route from 'expresskit/route';
+import {Body} from 'expresskit/property';
+import Auth from 'expresskit/auth';
+import Rule from 'expresskit/rule';
+import User from './index';
+
+export default class UserRouter {
+  @Route('PUT', '/user')
+  @Rule('User', 'Owner')
+  public static updateUser(@Body() update: User, @Auth('User') user: User) {
+    console.log(update);
+    console.log(user);
+    return user;
+  }
+}
+```
+
+Rule Handlers are not limited to authorization so they aren't called Authorization Handlers.

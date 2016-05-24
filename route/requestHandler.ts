@@ -97,11 +97,19 @@ export default class RequestHandlerService {
           if(response.type === ResponseType.Success) {
             handler.object[handler.method].apply(handler.object, response.data).then(() => {
               resolve();
-            }).catch(() => {
-              resolve(this.verifyNextRule(group, names, ++index, config));
+            }).catch((response: Response) => {
+              if(names[++index]) {
+                resolve(this.verifyNextRule(group, names, index, config));
+              } else {
+                reject(response);
+              }
             });
           } else {
-            resolve(this.verifyNextRule(group, names, ++index, config));
+            if(names[++index]) {
+              resolve(this.verifyNextRule(group, names, index, config));
+            } else {
+              reject(response);
+            }
           }
         }); 
       } else {
