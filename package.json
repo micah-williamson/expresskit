@@ -27,5 +27,9 @@
     "compression": "^1.6.2",
     "express": "^4.13.4",
     "systemjs": "^0.19.28"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamchairs/expresskit.git"
   }
 }
