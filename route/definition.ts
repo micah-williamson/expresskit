@@ -4,6 +4,8 @@ declare var require: any;
 declare var __dirname: any;
 var express = require('express');
 var path = require('path');
+var bodyParser = require('body-parser');
+var compression = require('compression')
 
 import ExpressKit from '../index';
 import {Application} from 'express';
@@ -12,7 +14,6 @@ import {DecoratorDefinitionService} from '../decorator/definition';
 import DecoratorManager from '../decorator/manager';
 import {IInjectionContext} from '../injection';
 import InjectionManager from '../injection/manager';
-import RouteManager from './manager';
 
 export type RouteMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -61,6 +62,15 @@ export default class RouteDecoratorDefinitionService extends DecoratorDefinition
   }
   
   public onBeforeAppStart() {
+    if(ExpressKit.config.compression) {
+      ExpressKit.server.use(compression());
+    }
+    
+    ExpressKit.server.use(bodyParser.json({ type: 'application/json' }));
+    ExpressKit.server.use(bodyParser.urlencoded({extended: true}));
+    ExpressKit.server.use(bodyParser.text());
+    ExpressKit.server.use(bodyParser.raw());
+    
     this.bindStaticFiles(ExpressKit.server, ExpressKit.config.staticFiles);
     this.bindStaticPaths(ExpressKit.server, ExpressKit.config.staticPaths);
   }

@@ -1,10 +1,8 @@
 declare var require: any;
 declare var process: any;
 
-import RouteManager from './route/manager';
 import DecoratorManager from './decorator/manager';
 import {IStaticUriPath} from './route/definition';
-
 import {Application} from 'express';
 
 var express: () => Application = require('express');
@@ -44,21 +42,20 @@ export default class ExpressKit {
     
     process.env.TZ = config.timezone;
     
-    this.server.use(bodyParser.json({ type: 'application/json' }));
-    this.server.use(bodyParser.urlencoded({extended: true}));
-    this.server.use(bodyParser.text());
-    this.server.use(bodyParser.raw());
-    
-    if(config.compression) {
-      this.server.use(compression());
+    // Before app start
+    for(let serviceName in DecoratorManager.decoratorDefinitionServices) {
+      let service = DecoratorManager.decoratorDefinitionServices[serviceName];
+      service.onBeforeAppStart();
     }
-
-    RouteManager.bindStaticPaths(this.server, config.staticPaths);
-    RouteManager.bindStaticFiles(this.server, config.staticFiles);
-    RouteManager.bindRoutes(this.server);
 
     this.server.listen(config.port, () => {
       console.log(`Started server on port ${config.port}`);
+      
+      // After app start
+      for(let serviceName in DecoratorManager.decoratorDefinitionServices) {
+        let service = DecoratorManager.decoratorDefinitionServices[serviceName];
+        service.onAfterAppStart();
+      }
     });
   }
 }
