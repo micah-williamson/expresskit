@@ -2,9 +2,12 @@ declare var require: any;
 declare var process: any;
 
 import RouteManager from './route/manager';
-import {IStaticUriPath} from './route/static';
+import DecoratorManager from './decorator/manager';
+import {IStaticUriPath} from './route/definition';
 
-var express = require('express');
+import {Application} from 'express';
+
+var express: () => Application = require('express');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 
@@ -26,12 +29,16 @@ function initDefaultExpressKitConfig(config: IExpressKitConfig) {
 
 export default class ExpressKit {
 
-  public static server = express();
+  public static server: Application = express();
+  
+  public static decoratorManager = DecoratorManager;
+  
+  public static config: IExpressKitConfig;
 
   public static start(config?: IExpressKitConfig ) {
     // TODO: es6 node does not support defaults in the arguments.
     //       Once this becomes available use `= {}` as the default value
-    config = config || {}
+    this.config = config || {}
     
     initDefaultExpressKitConfig(config);
     

@@ -1,8 +1,17 @@
-import RouteManager from './manager';
+import {RouteMethod, RouteDecorator, IRouteConfig} from './manager';
+import DecoratorManager from '../decorator/manager';
 
-export default function Route(method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+export default function Route(routeMethod: RouteMethod,
                               path: string) {
-  return function(obj: any, key: string) {
-    RouteManager.registerRoute(method, path, obj, key);
+                                
+  return function(object: any, method: string) {
+    let config: IRouteConfig = {
+      name: 'Route',
+      routeMethod: routeMethod,
+      path: path
+    };
+    
+    DecoratorManager.registerMethodDecorator(object, method, config);
   }
+  
 }

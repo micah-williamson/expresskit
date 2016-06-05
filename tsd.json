@@ -5,20 +5,20 @@
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
-    "mime/mime.d.ts": {
-      "commit": "e0abafb1a6ff652f7ff967120e312d5c1916eaef"
+    "serve-static/serve-static.d.ts": {
+      "commit": "1be72cdce38fa12471085ac2cf39b0a901321720"
     },
     "express/express.d.ts": {
-      "commit": "e0abafb1a6ff652f7ff967120e312d5c1916eaef"
-    },
-    "serve-static/serve-static.d.ts": {
-      "commit": "e0abafb1a6ff652f7ff967120e312d5c1916eaef"
-    },
-    "express-serve-static-core/express-serve-static-core.d.ts": {
-      "commit": "e0abafb1a6ff652f7ff967120e312d5c1916eaef"
+      "commit": "1be72cdce38fa12471085ac2cf39b0a901321720"
     },
     "node/node.d.ts": {
-      "commit": "e0abafb1a6ff652f7ff967120e312d5c1916eaef"
+      "commit": "1be72cdce38fa12471085ac2cf39b0a901321720"
+    },
+    "mime/mime.d.ts": {
+      "commit": "1be72cdce38fa12471085ac2cf39b0a901321720"
+    },
+    "express-serve-static-core/express-serve-static-core.d.ts": {
+      "commit": "1be72cdce38fa12471085ac2cf39b0a901321720"
     }
   }
 }
