@@ -1,5 +1,6 @@
-import {default as Decorator, MethodDecorator, MethodParamDecorator, PropertyDecorator, IDecoratorConfig} from './index';
-import {DecoratorDefinitionService} from './definition';
+import {Decorator, MethodDecorator, MethodParamDecorator, PropertyDecorator, IDecoratorConfig} from './index';
+import {DefinitionService, DecoratorDefinitionService} from './definition';
+import {IInjectionContext} from '../injection';
 import fatal from '../error';
 
 interface IDecoratorDefinitionServiceMap {
@@ -129,6 +130,21 @@ export default class DecoratorManager {
     });
     
     return methodParamDecorators;
+  }
+  
+  /**
+   * Returns method params for the given object/method
+   */
+  public static getMethodDecoratorsFor(object: any, method: string): MethodDecorator[] {
+    let methodDecorators: MethodDecorator[] = [];
+    
+    this.methodDecorators.forEach((decorator) => {
+      if(decorator.object === object && decorator.method === method) {
+        methodDecorators.push(decorator);
+      }
+    });
+    
+    return methodDecorators;
   }
 }
 

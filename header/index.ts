@@ -1,3 +1,5 @@
+import './definition';
+
 import {MethodParamDecorator, IDecoratorConfig} from '../decorator';
 import DecoratorManager from '../decorator/manager';
 

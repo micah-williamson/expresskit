@@ -1,5 +1,5 @@
 import ExpressKit from '../index';
-import {default as Decorator, MethodParamDecorator} from './index';
+import {Decorator, MethodDecorator, MethodParamDecorator} from './index';
 import {IInjectionContext} from '../injection';
 import DecoratorManager from './manager';
 import fatal from '../error/index';
@@ -8,18 +8,18 @@ export interface IDecoratorDefinition {
   name: string;
 }
 
-export function DecoratorDefinition(name: string) {
-  return function(object: any) {
+export function DefinitionService() {
+  return function(object: typeof DecoratorDefinitionService) {
+    let service = new object();
     
+    console.log('[debug] Registering Decorator Definition: ' + service.name);
+    
+    DecoratorManager.registerDecoratorDefinitionService(service);
   }
 }
 
-export abstract class DecoratorDefinitionService {
+export class DecoratorDefinitionService {
   public name: string;
-  
-  constructor() {
-    DecoratorManager.registerDecoratorDefinitionService(this);
-  }
   
   public onInstanceRegister(decorator: Decorator): void {};
   
@@ -34,6 +34,11 @@ export abstract class DecoratorDefinitionService {
   public fatal = fatal;
 }
 
-export abstract class MethodParamDecoratorDefinitionService extends DecoratorDefinitionService {
-  public abstract async resolve(decorator: MethodParamDecorator, context: IInjectionContext): Promise<any>;
+export class MethodDecoratorDefinitionService extends DecoratorDefinitionService {
+  public async onBefore(decorator: MethodDecorator, context: IInjectionContext): Promise<any> {}
+  public async onAfter(decorator: MethodDecorator, context: IInjectionContext): Promise<any> {}
+}
+
+export class MethodParamDecoratorDefinitionService extends DecoratorDefinitionService {
+  public async resolve(decorator: MethodParamDecorator, context: IInjectionContext): Promise<any> {};
 }

@@ -1,3 +1,5 @@
+import './definition';
+
 import {IQueryConfig} from './definition';
 import DecoratorManager from '../decorator/manager';
 

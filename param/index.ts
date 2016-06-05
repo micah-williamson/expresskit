@@ -1,3 +1,5 @@
+import './definition';
+
 import {IParamConfig} from './definition';
 import DecoratorManager from '../decorator/manager';
 

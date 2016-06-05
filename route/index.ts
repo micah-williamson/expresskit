@@ -1,4 +1,6 @@
-import {RouteMethod, RouteDecorator, IRouteConfig} from './manager';
+import './definition';
+
+import {RouteMethod, RouteDecorator, IRouteConfig} from './definition';
 import DecoratorManager from '../decorator/manager';
 
 export default function Route(routeMethod: RouteMethod,

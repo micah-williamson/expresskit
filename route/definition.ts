@@ -8,9 +8,10 @@ var bodyParser = require('body-parser');
 var compression = require('compression')
 
 import ExpressKit from '../index';
-import {Application} from 'express';
+import RouteResponse from './response';
+import {Application, Request, Response, RequestHandler} from 'express';
 import {MethodDecorator, IDecoratorConfig} from '../decorator';
-import {DecoratorDefinitionService} from '../decorator/definition';
+import {DefinitionService, MethodDecoratorDefinitionService} from '../decorator/definition';
 import DecoratorManager from '../decorator/manager';
 import {IInjectionContext} from '../injection';
 import InjectionManager from '../injection/manager';
@@ -39,8 +40,12 @@ export interface IStaticUriPath {
   path: string
 }
 
-export default class RouteDecoratorDefinitionService extends DecoratorDefinitionService {
+@DefinitionService()
+export default class RouteDecoratorDefinitionService extends MethodDecoratorDefinitionService {
   public name = 'Route';
+  
+  // HACK: node doesn't supper `...args` yet
+  constructor(){super();}
   
   /**
    * Be sure no routes share the same [routeMethod] => [path]
@@ -61,6 +66,9 @@ export default class RouteDecoratorDefinitionService extends DecoratorDefinition
     this.bindRoute(decorator);
   }
   
+  /**
+   * Setup middleware. Bind static files/paths
+   */
   public onBeforeAppStart() {
     if(ExpressKit.config.compression) {
       ExpressKit.server.use(compression());
@@ -80,6 +88,9 @@ export default class RouteDecoratorDefinitionService extends DecoratorDefinition
    */
   private bindRoute(decorator: RouteDecorator) {
     let config = decorator.config;
+    
+    console.log(`[debug] Binding route ${config.routeMethod} => ${config.path}`);
+    
     let expressMethod = this.getExpressMethod(ExpressKit.server, config.routeMethod);
     expressMethod.call(ExpressKit.server, config.path, this.requestHandlerFactory(decorator));
   }
@@ -137,12 +148,16 @@ export default class RouteDecoratorDefinitionService extends DecoratorDefinition
    * @description Returns a route handler
    * @param {IRoute} route [description]
    */
-  private requestHandlerFactory(methodDecorator: MethodDecorator): any {
-    return (request: any, expressResponse: any) => {
+  private requestHandlerFactory(methodDecorator: RouteDecorator): RequestHandler {
+    return (request: Request, expressResponse: Response) => {
       let context = this.generateRequestContext(request);
       
-      InjectionManager.resolveMethodParams(methodDecorator.object, methodDecorator.method, context).then((args) => {
-        methodDecorator.object[methodDecorator.method].apply(methodDecorator.object, args);
+      console.log(`[debug] Route requested [${methodDecorator.config.routeMethod}] => ${methodDecorator.config.path}`);
+      
+      return InjectionManager.callMethod(methodDecorator.object, methodDecorator.method, context).then((resolution: any) => {
+        this.handleRouteResolution(expressResponse, resolution);
+      }).catch((rejection: any) => {
+        this.handleRouteRejection(expressResponse, rejection);
       });
       
       /*let config = this.generateRequestConfig(request);
@@ -161,10 +176,31 @@ export default class RouteDecoratorDefinitionService extends DecoratorDefinition
   }
   
   /**
+   * Handles a route rejection by sending the rejection with
+   * a 500 error.
+   */
+  private handleRouteRejection(expressResponse: Response, rejection: any) {
+    rejection = this.wrapRejection(rejection);
+    expressResponse.status(rejection.status).send(rejection.data);
+  }
+  
+  /**
+   * Handles the resolution by sending the resolution with
+   * a 200 response. If the resolution is empty, a 204 response is sent.
+   */
+  private handleRouteResolution(expressResponse: Response, resolution: any) {
+    resolution = this.wrapResponse(resolution);
+    expressResponse.status(resolution.status).send(resolution.data);
+  }
+  
+  /**
    * Given the static paths, uses express.static to bind static paths
    */
   private bindStaticPaths(application: Application, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((path) => {
+      
+      console.log(`[debug] Binding static path ${path.uri} => ${__dirname}/${path.path}`);
+      
       application.use(path.uri, express.static(path.path));
     });
   }
@@ -174,9 +210,36 @@ export default class RouteDecoratorDefinitionService extends DecoratorDefinition
    */
   private bindStaticFiles(application: Application, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((p) => {
+      
+      console.log(`[debug] Binding static file ${p.uri} => ${__dirname}/${p.path}`);
+      
       application.get(p.uri, (req: any, res: any) => {
         res.sendFile(path.resolve(__dirname + '/' + p.path));
       });
     });
+  }
+  
+  private wrapResponse(response: any): RouteResponse {
+    if(response instanceof RouteResponse) {
+      return response;
+    } else if(response !== undefined) {
+      response = new RouteResponse(200, response);
+    } else {
+      response = new RouteResponse(204, response); 
+    }
+    
+    return response;
+  }
+  
+  private wrapRejection(response: any): RouteResponse {
+    if(response instanceof RouteResponse) {
+      return response;
+    } else if(response instanceof Error) {
+      response = new RouteResponse(500, response.stack.toString());
+    } else {
+      response = new RouteResponse(500, response); 
+    }
+    
+    return response;
   }
 }

@@ -1,4 +1,4 @@
-export default class Decorator {
+export class Decorator {
   /**
    * Decorators are always bound to an object in some way
    */

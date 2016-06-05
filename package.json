@@ -25,6 +25,7 @@
   "dependencies": {
     "body-parser": "^1.15.1",
     "compression": "^1.6.2",
+    "es6-promise-chain": "^1.0.4",
     "express": "^4.13.4",
     "systemjs": "^0.19.28"
   },
