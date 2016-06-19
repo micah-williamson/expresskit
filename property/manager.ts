@@ -47,7 +47,7 @@ export default class PropertyManager {
           returnPromises[prop.index] = this.resolveHeader(prop, config);
           break;
         case PropertyType.Auth:
-          returnPromises[prop.index] = Promise.resolve(this.resolveAuthentication(prop, config));
+          returnPromises[prop.index] = this.resolveAuthentication(prop, config);
           break;
       }
     });
@@ -154,29 +154,41 @@ export default class PropertyManager {
    * @return {Promise<any>}
    */
   public static resolveAuthentication(prop: IProperty, config: RequestConfig): Promise<any> {
-    let name = prop.name;
-    let authResource: IAuthHandler;
+    return new Promise((resolve, reject) => { 
+      let name = prop.name;
+      let authResource: IAuthHandler;
 
-    if(name) {
-      authResource = AuthManager.getHandlerByName(name);
-    } else {
-      authResource = AuthManager.getDefault();
-    }
-    
-
-    let propertyValues = this.getProperties(authResource.object, authResource.method);
-    return this.getPropertyValues(propertyValues, config).then((response: Response) => {
-      if(response.type === ResponseType.Error) {
-        return response;
+      if(name) {
+        authResource = AuthManager.getHandlerByName(name);
+      } else {
+        authResource = AuthManager.getDefault();
       }
 
-      return Promise.resolve(authResource.object[authResource.method].apply(authResource, response.data))
-                .catch((response: any) => {
-                  // If a Response wasn't returned, force a 401 response
-                  if(!(response instanceof Response)) {
-                    return new Response(401, response);
-                  }
-                });
+      let propertyValues = this.getProperties(authResource.object, authResource.method);
+      this.getPropertyValues(propertyValues, config).then((response: Response) => {
+        if(response.type === ResponseType.Error) {
+          reject(response);
+        } else {
+          Promise.resolve(authResource.object[authResource.method].apply(authResource, response.data))
+            .then((response: any) => {
+              if(response.type === ResponseType.Error) {
+                reject(response);
+              } else {
+                resolve(response); 
+              }
+            })
+            .catch((response: any) => {
+              // If a Response wasn't returned, force a 401 response
+              if(!(response instanceof Response)) {
+                reject(new Response(401, response));
+              } else {
+                reject(response);
+              }
+            });               
+        }
+      }).catch((response: any) => {
+        reject(response);
+      });
     });
   }
 
