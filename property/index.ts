@@ -6,19 +6,19 @@ export interface IProperty {
   type: PropertyType;
   object: any;
   method: string;
-  name: string;
+  name: any;
   index: number;
   optional: boolean;
   defaultValue: any;
 }
 
-export function Body() {
+export function Body(dto?: Object) {
   return function(object: any, method: string, index: number) {
     let property: IProperty = {
       type: PropertyType.Body,
       object: object,
       method: method,
-      name: undefined,
+      name: dto,
       index: index,
       optional: false,
       defaultValue: undefined

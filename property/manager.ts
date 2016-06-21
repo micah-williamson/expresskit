@@ -4,6 +4,7 @@ import ResponseHandler from '../route/responseHandler';
 import {IAuthHandler, default as AuthManager} from '../auth/manager';
 import {default as Response, ResponseType} from '../route/response';
 import fatal from '../error';
+import {DTOValidator} from '../dto/validator';
 
 export default class PropertyManager {
   public static properties: IProperty[] = [];
@@ -35,7 +36,7 @@ export default class PropertyManager {
     properties.forEach((prop) => {
       switch(prop.type) {
         case PropertyType.Body:
-          returnPromises[prop.index] = Promise.resolve(config.request.body);
+          returnPromises[prop.index] = this.resolveBody(prop, config);
           break;
         case PropertyType.Param:
           returnPromises[prop.index] = this.resolveParam(prop, config);
@@ -69,6 +70,27 @@ export default class PropertyManager {
 
       return new Response(200, returnValues);
     });
+  }
+  
+  /**
+   * Resolves the body submitted in the request.
+   * If the body should be a DTO, validates the DTO
+   */
+  private static resolveBody(property: IProperty, config: RequestConfig): Promise<any> {
+    let body = config.request.body;
+    if(property.name) {
+      if(body) {
+        let err = DTOValidator.validateIn(body, property.name.prototype);
+        
+        if(err) {
+          return Promise.reject(new Response(400, err));
+        } 
+      } else {
+        return Promise.reject(new Response(400, 'Body expected')); 
+      }
+    }
+    
+    return Promise.resolve(body);
   }
 
   /**
