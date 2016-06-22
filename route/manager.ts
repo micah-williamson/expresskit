@@ -75,6 +75,8 @@ export default class RouteManager {
    */
   public static bindRoutes(application: any) {
     this.routes.forEach(route => {
+      console.log(`[DEBUG] Bound route: ${route.method} > ${route.path} to ${route.object.prototype.constructor.name}.${route.key}.`);
+
       let expressMethod = this.getExpressMethod(application, route.method);
       expressMethod.call(application, route.path, RequestHandlerService.requestHandlerFactory(route));
     });

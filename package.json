@@ -19,7 +19,10 @@
   ],
   "author": "Micah Williamson",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "request": "^2.72.0"
+  },
   "dependencies": {
     "body-parser": "^1.15.1",
     "compression": "^1.6.2",

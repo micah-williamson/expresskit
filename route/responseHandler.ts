@@ -29,6 +29,12 @@ export default class ResponseHandlerService {
   public static convertErrorResponse(data: any): Response {
     if(data instanceof Response) {
       return data;
+    } else if (data instanceof Error) {
+      if(data.toString() === 'Error') {
+        data = data.stack.toString();
+      } else {
+        data = data.toString();
+      }
     }
 
     return new Response(500, data);

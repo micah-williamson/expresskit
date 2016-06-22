@@ -35,9 +35,9 @@ export class DTOValidator {
     // Scrub properties out
     for(var i = 0; i < dtoProperties.length; i++) {
       let dtoProperty = dtoProperties[i];
-      let scrubIn = Reflect.getMetadata('ScrubIn', dto, dtoProperty);
+      let scrubOut = Reflect.getMetadata('ScrubOut', dto, dtoProperty);
       
-      if(scrubIn) {
+      if(scrubOut) {
         delete data[dtoProperty];
       }
     }

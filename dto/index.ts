@@ -1,5 +1,9 @@
 import {Reflect} from '../reflect';
 
+export function Response(name: string) {
+  
+}
+
 export function Required() {
   return function(object: any, property: any) {
     let dto = Reflect.getMetadata('DTO', object) || [];
