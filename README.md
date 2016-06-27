@@ -350,13 +350,13 @@ import {Validate, ScrubIn, ScrubOut, ResponseType) from 'expresskit/dto';
 export class User {
   @Validate({
     required: true,
-    type: string
+    type: 'string'
   })
-  public id: number;
+  public id: string;
 
   @Validate({
     required: true,
-    type: string,
+    type: 'string',
     minLength: 8,
     maxLength: 32,
     pattern: [/^[\w\d]+$/, 'Only alphanumeric values allowed']
@@ -365,7 +365,7 @@ export class User {
 
   @Validate({
     required: true,
-    type: string,
+    type: 'string',
     min: 13,
     max: [120, 'I doubt it']
   })
@@ -373,13 +373,13 @@ export class User {
 
   @Validate({
     required: true,
-    type: string
-  }
+    type: 'string'
+  })
   public email: string;
 
   @Validate({
     required: true,
-    type: string,
+    type: 'string',
     minLength: 8,
     maxLength: 32,
     pattern: [/[\w\d\s]/, 'At least one special character is required']
@@ -388,7 +388,7 @@ export class User {
   public password: string;
 
   @Validate({
-    type: string,
+    type: 'string',
     values: 'F,M'
   })
   public gender: string;
