@@ -30,7 +30,7 @@ export function Validate(rules: IValidationRules) {
   }
 }
 
-export function ScrubIn(tags?: IValidationTags) {
+export function ScrubIn(tags: IValidationTags = {}) {
   return function(object: any, property: any) {
     registerDTOProperty(object, property);
     
@@ -38,7 +38,7 @@ export function ScrubIn(tags?: IValidationTags) {
   }
 }
 
-export function ScrubOut(tags?: IValidationTags) {
+export function ScrubOut(tags: IValidationTags = {}) {
   return function(object: any, property: any) {
     registerDTOProperty(object, property);
 

@@ -327,8 +327,6 @@ export default class UserRouter {
   @Route('PUT', '/user')
   @Rule('User', 'Owner')
   public static updateUser(@Body() update: User, @Auth('User') user: User) {
-    console.log(update);
-    console.log(user);
     return user;
   }
 }
@@ -347,6 +345,8 @@ To define a DTO, just create a standard class and begin decorating it's properti
 Example:
 
 ```typescript
+import {Validate, ScrubIn, ScrubOut, ResponseType) from 'expresskit/dto';
+
 export class User {
   @Validate({
     required: true,
@@ -382,7 +382,7 @@ export class User {
     type: string,
     minLength: 8,
     maxLength: 32,
-    pattern: [/[^\w\d\s]/, 'At least one special character is required']
+    pattern: [/[\w\d\s]/, 'At least one special character is required']
   })
   @ScrubOut()
   public password: string;
@@ -402,6 +402,7 @@ export class User {
 
 export class UserRouter {
   @Route('PUT', '/user')
+  @ResponseType(User)
   public updateUser(@Body(User) update: User) {
     return UserService.updateUser(update);
   }
@@ -435,47 +436,4 @@ For convenience sake, you may want to scrub data going in or out. For example, y
 In in all cases you don't want the password available on any request. Traditionally you'd have to scrub these properties manually, but using `ScrubIn` and `ScrubOut` you can
 implement scrubbing with a decoration.
 
-### Route Specific Validation/Scrubbing
-
-Not all routes adhere to the same rules. Some routes may handle updating specific information, like emails/passwords. To do this you need to first
-name the route with the `@Tag` decorator. Multiple routes can share the same Tag, meaning validation can be implemented for multiple types of routes.
-Additionally, a route can have multiple tags and can be validated by different sets of criteria.
-
-```typescript
-export class UserRouter {
-  @Route('PUT', '/user')
-  @Tag('UpdateUser')
-  public updateUser(@Body(User) update: User) {
-    return UserService.updateUser(update);
-  }
-}
-```
-
-To target a specific tag, add the `$when` property to the validation rules.
-
-```typescript
-export class User {
-  @Validate({
-    $when: 'UpdateUser, OrSomeOtherTag, OrAnother',
-    required: true,
-    type: string
-  })
-  public id: number;
-}
-```
-
-In addition to `$when` you can define when `$not` to apply validation, with `$not`.
-
-```typescript
-export class User {
-  @Validate({
-    $not: 'CreateUser',
-    required: true,
-    type: string
-  })
-  @ScrubIn({
-    $when: 'CreateUser'
-  })
-  public id: number;
-}
-```
+To use `ScrubOut` you need to set the ResponseType of the route.
