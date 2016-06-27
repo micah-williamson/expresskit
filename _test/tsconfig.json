@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "noLib": false,
+    "experimentalDecorators": true,
+    "outDir": "bld"
+  },
+  "files": [
+    "../typings/tsd.d.ts",
+    "./src/index.ts"
+  ]
+}
