@@ -360,6 +360,27 @@ describe('DTO', () => {
             
         });
 
+        describe('Custom Errors', () => {
+
+            it('should use custom errors if given', (done) => {
+
+                let user = {
+                    id: 1,
+                    customErrorTest: 'foo'
+                }
+
+                request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
+                    assert.equal(err, null);
+                    assert.equal(response.statusCode, 400);
+                    assert.equal(body, 'this is a custom error');
+
+                    done();
+                });
+                
+            });
+            
+        });
+
     });
 
     describe('ScrubIn', () => {

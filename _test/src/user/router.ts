@@ -64,6 +64,11 @@ export class User {
         values: 'M,F'
     })
     enumTest: string;
+
+    @Validate({
+        type: ['number', 'this is a custom error']
+    })
+    customErrorTest: number;
 }
 
 export class UserService {
