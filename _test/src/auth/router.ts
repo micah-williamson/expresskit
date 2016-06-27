@@ -2,7 +2,6 @@ import Route from '../../../route';
 import {Param, Header, Body} from '../../../property';
 import Auth from '../../../auth';
 import AuthHandler from '../../../auth/handler';
-import {ScrubIn, ScrubOut, Required} from '../../../dto';
 import Response from '../../../route/response';
 
 export class AuthService {
@@ -12,7 +11,7 @@ export class AuthService {
     }
 
     @AuthHandler('Bar')
-    public static barAuth(@Header('Authorization') auth: string) {
+    public static barAuth(@Header('Authorization') auth: string): any {
         if(auth === 'barauth-throwerror') {
             throw new Error();
         } else if (auth === 'barauth-throwerrormessage') {

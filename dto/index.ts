@@ -1,41 +1,55 @@
 import {Reflect} from '../reflect';
+import {IValidationRules, IValidationTags} from './manager';
 
-export function Response(name: string) {
-  
-}
-
-export function Required() {
+export function ResponseType(dto: any) {
   return function(object: any, property: any) {
-    let dto = Reflect.getMetadata('DTO', object) || [];
-    if(dto.indexOf(property) === -1) {
-      dto.push(property);
-    }
-    Reflect.defineMetadata('DTO', dto, object);
-    
-    Reflect.defineMetadata('Required', true, object, property);
+    Reflect.defineMetadata('ResponseType', dto, object, property);
   }
 }
 
-export function ScrubIn() {
+export function Validate(rules: IValidationRules) {
   return function(object: any, property: any) {
-    let dto = Reflect.getMetadata('DTO', object) || [];
-    if(dto.indexOf(property) === -1) {
-      dto.push(property);
+    registerDTOProperty(object, property);
+
+    for(var key in rules) {
+      if(key[0] !== '$') {
+        let val = rules[key];
+
+        if(typeof val !== 'object') {
+          rules[key] = [val, null];
+        } else if(!val.hasOwnProperty('length')) {
+          rules[key] = [val, null];
+        }
+      }
     }
-    Reflect.defineMetadata('DTO', dto, object);
-    
-    Reflect.defineMetadata('ScrubIn', true, object, property);
+
+    let validation = Reflect.getMetadata('Validation', object, property) || [];
+    validation.push(rules);
+
+    Reflect.defineMetadata('Validation', validation, object, property);
   }
 }
 
-export function ScrubOut() {
+export function ScrubIn(tags?: IValidationTags) {
   return function(object: any, property: any) {
-    let dto = Reflect.getMetadata('DTO', object) || [];
-    if(dto.indexOf(property) === -1) {
-      dto.push(property);
-    }
-    Reflect.defineMetadata('DTO', dto, object);
+    registerDTOProperty(object, property);
     
-    Reflect.defineMetadata('ScrubOut', true, object, property);
+    Reflect.defineMetadata('ScrubIn', tags, object, property);
   }
+}
+
+export function ScrubOut(tags?: IValidationTags) {
+  return function(object: any, property: any) {
+    registerDTOProperty(object, property);
+
+    Reflect.defineMetadata('ScrubOut', tags, object, property);
+  }
+}
+
+function registerDTOProperty(object: any, property: any) {
+  let dto = Reflect.getMetadata('DTO', object) || [];
+  if(dto.indexOf(property) === -1) {
+    dto.push(property);
+  }
+  Reflect.defineMetadata('DTO', dto, object);
 }

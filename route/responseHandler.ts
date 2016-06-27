@@ -1,4 +1,6 @@
 import {IRoute} from './manager';
+import {DTOManager} from '../dto/manager';
+import {Reflect} from '../reflect';
 import Response from './response';
 
 export default class ResponseHandlerService {
@@ -7,14 +9,14 @@ export default class ResponseHandlerService {
     if(methodResponse && methodResponse.then) {
       methodResponse.then((payload: any) => {
         let response = this.convertSuccessResponse(payload);
-        this.sendResponse(response, expressResponse);
+        this.sendResponse(route, response, expressResponse);
       }).catch((payload: any) => {
         let response = this.convertErrorResponse(payload);
-        this.sendResponse(response, expressResponse);
+        this.sendResponse(route, response, expressResponse);
       });
     } else {
       let response = this.convertSuccessResponse(methodResponse);
-      this.sendResponse(response, expressResponse);
+      this.sendResponse(route, response, expressResponse);
     }
   }
 
@@ -40,7 +42,15 @@ export default class ResponseHandlerService {
     return new Response(500, data);
   }
 
-  private static sendResponse(response: Response, expressResponse: any) {
+  private static sendResponse(route: IRoute, response: Response, expressResponse: any) {
+    let object = route.object;
+    let key = route.key;
+
+    let responseType = Reflect.getMetadata('ResponseType', object, key);
+    if(responseType) {
+      DTOManager.scrubOut(response.data, responseType);
+    }
+
     expressResponse.status(response.httpCode).send(response.data);
   }
 

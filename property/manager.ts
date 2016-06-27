@@ -4,7 +4,7 @@ import ResponseHandler from '../route/responseHandler';
 import {IAuthHandler, default as AuthManager} from '../auth/manager';
 import {default as Response, ResponseType} from '../route/response';
 import fatal from '../error';
-import {DTOValidator} from '../dto/validator';
+import {DTOManager} from '../dto/manager';
 
 export default class PropertyManager {
   public static properties: IProperty[] = [];
@@ -80,7 +80,9 @@ export default class PropertyManager {
     let body = config.request.body;
     if(property.name) {
       if(body) {
-        let err = DTOValidator.validateIn(body, property.name.prototype);
+
+        DTOManager.scrubIn(body, property.name);;
+        let err = DTOManager.validate(body, property.name);
         
         if(err) {
           return Promise.reject(new Response(400, err));

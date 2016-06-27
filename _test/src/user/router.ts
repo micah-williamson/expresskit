@@ -2,10 +2,12 @@ import Route from '../../../route';
 import {Param, Header, Body} from '../../../property';
 import Auth from '../../../auth';
 import AuthHandler from '../../../auth/handler';
-import {ScrubIn, ScrubOut, Required} from '../../../dto';
+import {ScrubOut, Validate, ResponseType} from '../../../dto';
 
 export class User {
-    @Required()
+    @Validate({
+        required: true
+    })
     id: string;
     
     username: string;
@@ -32,6 +34,7 @@ export class UserService {
 
 export class UserRouter {
     @Route('PUT', '/user')
+    @ResponseType(User)
     public static updateUser(@Auth('User') user: User, @Body(User) update: User) {
         return update;
     }
