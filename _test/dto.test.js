@@ -27,8 +27,8 @@ describe('DTO', () => {
 
         request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
             assert.equal(err, null);
-            assert.equal(response.statusCode, 200);
             assert.deepEqual(body, user);
+            assert.equal(response.statusCode, 200);
 
             done();
         });
@@ -46,8 +46,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'Required property missing: id');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -66,8 +66,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'typeTestString was expected to be string');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -82,8 +82,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -98,8 +98,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'typeTestNumber was expected to be number');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -114,8 +114,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -130,8 +130,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'typeTestObject was expected to be object');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -146,8 +146,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -162,8 +162,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'typeTestArray was expected to be array');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -178,8 +178,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -198,8 +198,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'lengthTest expected to have a minimum length of 3');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -214,8 +214,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'lengthTest exceeds the maximum length of 5');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -230,8 +230,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -250,8 +250,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'valueTest must be at least 3');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -266,8 +266,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'valueTest cannot exceed 5');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -282,8 +282,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -302,8 +302,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'patternTest1 does not satisfy pattern /^[\\w\\d]+$/');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -318,8 +318,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -334,8 +334,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'patternTest2 does not satisfy pattern /[^\\w\\d\\s]/');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });
@@ -350,8 +350,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 200);
                     assert.deepEqual(body, user);
+                    assert.equal(response.statusCode, 200);
 
                     done();
                 });
@@ -371,8 +371,8 @@ describe('DTO', () => {
 
                 request.put('http://localhost:8000/user', {headers: {'Authorization': 'foo'}, json: user}, (err, response, body) => {
                     assert.equal(err, null);
-                    assert.equal(response.statusCode, 400);
                     assert.equal(body, 'this is a custom error');
+                    assert.equal(response.statusCode, 400);
 
                     done();
                 });

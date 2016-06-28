@@ -1,8 +1,6 @@
-import Route from '../../../route';
+import {Route, Response} from '../../../route';
 import {Param, Header, Body} from '../../../property';
-import Auth from '../../../auth';
-import AuthHandler from '../../../auth/handler';
-import Response from '../../../route/response';
+import {Auth, AuthHandler} from '../../../auth';
 
 export class AuthService {
     @AuthHandler('Foo', true)

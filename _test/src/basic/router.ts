@@ -1,5 +1,4 @@
-import Route from '../../../route';
-import Response from '../../../route/response';
+import {Route, Response} from '../../../route';
 import {Param, Query, Body} from '../../../property';
 
 export class UserRouter {

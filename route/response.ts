@@ -1,6 +1,6 @@
 export enum ResponseType {Success, Error};
 
-export default class Response {
+export class Response {
   public type: ResponseType;
 
   public constructor(public httpCode: number, public data: any) {

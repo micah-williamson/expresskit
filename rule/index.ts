@@ -1,34 +1,18 @@
-import RuleManager from './manager';
-import fatal from '../error';
+import {Reflect} from '../reflect';
 
-export default function Rule(group: string, names: string) {
+import {Response} from '../route/response';
+
+export interface IRuleResolver {
+  (... val: any[]): Promise<any | Response>;
+} 
+
+export type IRuleResolverTree = Array<Array<IRuleResolver>>;
+
+export function Rule(... resolvers: IRuleResolver[]) {
   return function(object: any, method: string) {
-    let namesArray = names.split(/,|\s+/);
-    let finalNames: string[] = [];
-    for(var i = 0; i < namesArray.length; i++) {
-      let r = namesArray[i];
-      if(r) {
-        finalNames.push(r); 
-      }
-    }
-    
-    if(!finalNames.length) {
-      fatal(new Error(`Unable to register rule group '${group}' on ${object.prototype.constructor.name}.${method}. No rule names found. Use: @RuleHandler('group', 'name1,name2')`));
-    }
-    
-    namesArray.forEach((name) => {
-      let ruleHandler = RuleManager.getHandlerByGroupAndName(group, name);
-      
-      if(!ruleHandler) {
-        fatal(new Error(`Unable to register rule ${group}.${name} to ${object.prototype.constructor.name}.${method}. This group.name combination does not exist.`));
-      }
-    });
-    
-    RuleManager.registerRule({
-      group: group,
-      names: finalNames,
-      object: object,
-      method: method
-    });
+    let rules = Reflect.getMetadata('Rules', object, method) || [];
+    rules.push(resolvers);
+
+    Reflect.defineMetadata('Rules', rules, object, method);
   }
 }

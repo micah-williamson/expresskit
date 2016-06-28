@@ -1,4 +1,4 @@
-import fatal from '../error';
+import {fatal} from '../error';
 
 export class IAuthHandler {
   public name: string;
@@ -10,7 +10,7 @@ export class IAuthHandler {
   public method: string;
 }
 
-export default class AuthManager {
+export class AuthManager {
   public static handlers: IAuthHandler[] = [];
 
   /**

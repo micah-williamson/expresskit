@@ -10,8 +10,8 @@ describe('Basic Routing', () => {
         it('should GET', (done) => {
             request('http://localhost:8000/basic', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'get');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -19,8 +19,8 @@ describe('Basic Routing', () => {
         it('should pass params', (done) => {
             request('http://localhost:8000/basic/param/foo', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -28,8 +28,8 @@ describe('Basic Routing', () => {
         it('should pass query params', (done) => {
             request('http://localhost:8000/basic/query?q=foo', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -37,8 +37,8 @@ describe('Basic Routing', () => {
         it('should fail if required query params arent passed', (done) => {
             request('http://localhost:8000/basic/query', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 400);
                 assert.equal(body, 'Required query parameter missing: q');
+                assert.equal(response.statusCode, 400);
                 done();
             });
         });
@@ -46,8 +46,8 @@ describe('Basic Routing', () => {
         it('should pass optional query params', (done) => {
             request('http://localhost:8000/basic/optionalquery?q=foo', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -55,8 +55,8 @@ describe('Basic Routing', () => {
         it('should not fail if an option query param is not passed', (done) => {
             request('http://localhost:8000/basic/optionalquery', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'optional');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -64,8 +64,8 @@ describe('Basic Routing', () => {
         it('should pass query params with a default value', (done) => {
             request('http://localhost:8000/basic/defaultquery?q=foo', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -78,20 +78,11 @@ describe('Basic Routing', () => {
             });
         });
 
-        it('should handle an error thrown with a message', (done) => {
-            request('http://localhost:8000/basic/errorthrownwithmessage', (err, response, body) => {
-                assert.equal(err, null);
-                assert.equal(response.statusCode, 500);
-                assert.equal(body, 'Error: foo');
-                done();
-            });
-        });
-
         it('should handle a resolved promise', (done) => {
             request('http://localhost:8000/basic/resolvedpromise', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 204);
                 assert.equal(body, '');
+                assert.equal(response.statusCode, 204);
                 done();
             });
         });
@@ -99,8 +90,8 @@ describe('Basic Routing', () => {
         it('should handle a resolved promise with a message', (done) => {
             request('http://localhost:8000/basic/resolvedpromisewithmessage', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -108,8 +99,8 @@ describe('Basic Routing', () => {
         it('should handle a resolved promise with a response', (done) => {
             request('http://localhost:8000/basic/resolvedpromisewithresponse', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 201);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 201);
                 done();
             });
         });
@@ -117,8 +108,8 @@ describe('Basic Routing', () => {
         it('should handle a rejected promise', (done) => {
             request('http://localhost:8000/basic/rejectedpromise', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 500);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 500);
                 done();
             });
         });
@@ -126,8 +117,8 @@ describe('Basic Routing', () => {
         it('should handle a rejected promise with a message', (done) => {
             request('http://localhost:8000/basic/rejectedpromise', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 500);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 500);
                 done();
             });
         });
@@ -135,8 +126,8 @@ describe('Basic Routing', () => {
         it('should handle a rejected promise with a response', (done) => {
             request('http://localhost:8000/basic/rejectedpromisewithresponse', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 405);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 405);
                 done();
             });
         });
@@ -144,8 +135,8 @@ describe('Basic Routing', () => {
         it('should handle a returned response', (done) => {
             request('http://localhost:8000/basic/response', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 201);
                 assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 201);
                 done();
             });
         });
@@ -157,8 +148,8 @@ describe('Basic Routing', () => {
         it('should PUT', (done) => {
             request.put('http://localhost:8000/basic', {}, (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'put');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -166,8 +157,8 @@ describe('Basic Routing', () => {
         it('should default to 204 response', (done) => {
             request.put('http://localhost:8000/basic/noresponse', {}, (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 204);
                 assert.equal(body, '');
+                assert.equal(response.statusCode, 204);
                 done();
             });
         });
@@ -176,8 +167,8 @@ describe('Basic Routing', () => {
             let payload = {payload: 'foo'};
             request.put('http://localhost:8000/basic/payload', {json: payload}, (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.deepEqual(body, payload);
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -189,8 +180,8 @@ describe('Basic Routing', () => {
         it('should POST', (done) => {
             request.post('http://localhost:8000/basic', {}, (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'post');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -199,8 +190,8 @@ describe('Basic Routing', () => {
             let payload = {payload: 'foo'};
             request.post('http://localhost:8000/basic/payload', {json: payload}, (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.deepEqual(body, payload);
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });
@@ -212,8 +203,8 @@ describe('Basic Routing', () => {
         it('should DELETE', (done) => {
             request.delete('http://localhost:8000/basic', (err, response, body) => {
                 assert.equal(err, null);
-                assert.equal(response.statusCode, 200);
                 assert.equal(body, 'delete');
+                assert.equal(response.statusCode, 200);
                 done();
             });
         });

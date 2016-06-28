@@ -1,9 +1,10 @@
+import {Reflect} from '../reflect';
+
 import {IRoute} from './manager';
 import {DTOManager} from '../dto/manager';
-import {Reflect} from '../reflect';
-import Response from './response';
+import {Response} from './response';
 
-export default class ResponseHandlerService {
+export class ResponseHandlerService {
 
   public static handleResponse(route: IRoute, expressResponse: any, methodResponse: any) {
     if(methodResponse && methodResponse.then) {
@@ -32,11 +33,7 @@ export default class ResponseHandlerService {
     if(data instanceof Response) {
       return data;
     } else if (data instanceof Error) {
-      if(data.toString() === 'Error') {
-        data = data.stack.toString();
-      } else {
-        data = data.toString();
-      }
+      data = data.stack.toString();
     }
 
     return new Response(500, data);

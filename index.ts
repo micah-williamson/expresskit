@@ -1,7 +1,7 @@
 declare var require: any;
 declare var process: any;
 
-import RouteManager from './route/manager';
+import {RouteManager} from './route/manager';
 import {IStaticUriPath} from './route/static';
 
 var express = require('express');

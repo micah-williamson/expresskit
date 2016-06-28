@@ -1,5 +1,5 @@
 import {Reflect} from '../reflect';
-import fatal from '../error';
+import {fatal} from '../error';
 
 export type ValidationDataTypes = 'string' | 'number' | 'object' | 'array';
 
