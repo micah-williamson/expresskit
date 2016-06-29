@@ -1,6 +1,8 @@
 declare var require: any;
 declare var __dirname: any;
 
+import {Reflect} from '../reflect';
+
 import {IStaticUriPath} from './static';
 import {RequestHandlerService} from './requestHandler';
 import {AuthManager} from '../auth/manager';
@@ -11,6 +13,12 @@ var path = require('path');
 
 export type RouteMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+export interface IRouter {
+  mount: string;
+  object: any;
+  expressRouter: any;
+}
+
 export interface IRoute {
   method: RouteMethod;
   path: string;
@@ -19,7 +27,20 @@ export interface IRoute {
 };
 
 export class RouteManager {
+  public static routers: IRouter[] = [];
+
   public static routes: IRoute[] = [];
+
+  /**
+   * Registers a router with the route manager. Has no function other than handling middleware
+   */
+  public static registerRouter(object: any, mount: string) {
+    this.routers.push({
+      mount: mount,
+      object: object,
+      expressRouter: null
+    });
+  }
 
   /**
    * Registers a route to RouteManager.routes
@@ -53,12 +74,48 @@ export class RouteManager {
    * @param {any} application [description]
    */
   public static bindRoutes(application: any) {
+    // Initialize routers
+    this.routers.forEach((router) => {
+      let routerMiddleware = Reflect.getMetadata('Middlewares', router.object) || [];
+      let expressRouter = router.expressRouter;
+
+      if(!expressRouter) {
+        expressRouter = router.expressRouter = express.Router();
+      }
+
+      routerMiddleware.forEach((middleware: Function) => {
+        expressRouter.use(middleware);
+      });
+    });
+
+    // Bind routes
     this.routes.forEach(route => {
       console.log(`[DEBUG] Bound route: ${route.method} > ${route.path} to ${route.object.prototype.constructor.name}.${route.key}.`);
 
-      let expressMethod = this.getExpressMethod(application, route.method);
-      expressMethod.call(application, route.path, RequestHandlerService.requestHandlerFactory(route));
+      let expresskitRouter = this.getRouterByClass(route.object);
+      let router: any;
+
+      if(expresskitRouter) {
+        router = expresskitRouter.expressRouter;
+      } else {
+        router = application;
+      }
+
+      // Binding route middlewares
+      let routeMiddleware = Reflect.getMetadata('Middlewares', route.object, route.key) || [];
+      routeMiddleware.forEach((middleware: Function) => {
+        router.use(route.path, middleware);
+      });
+
+      let expressMethod = this.getExpressMethod(router, route.method);
+      expressMethod.call(router, route.path, RequestHandlerService.requestHandlerFactory(route));
     });
+
+    // Bind routers
+    this.routers.forEach((router) => {
+      application.use(router.mount, router.expressRouter);
+    });
+     
   }
   
   /**
@@ -96,6 +153,19 @@ export class RouteManager {
     });
 
     return route;
+  }
+
+  /**
+   * Gets the router by the object given. If the router doesn't exist, returns null
+   */
+  public static getRouterByClass(object: any) {
+    for(var i = 0; i < this.routers.length; i++) {
+      if(this.routers[i].object === object) {
+        return this.routers[i];
+      }
+    }
+
+    return null;
   }
 
   /**

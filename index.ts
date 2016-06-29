@@ -8,7 +8,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 
-export interface IExpressKitConfig {
+export interface IExpresskitConfig {
   port?: number;
   compression?: boolean;
   timezone?: string;
@@ -16,7 +16,7 @@ export interface IExpressKitConfig {
   staticPaths?: IStaticUriPath[];
 }
 
-function initDefaultExpressKitConfig(config: IExpressKitConfig) {
+function initDefaultExpresskitConfig(config: IExpresskitConfig) {
   config.port = config.port || 8000;
   config.compression = !!config.compression;
   config.timezone = config.timezone || 'Z';
@@ -24,16 +24,16 @@ function initDefaultExpressKitConfig(config: IExpressKitConfig) {
   config.staticPaths = config.staticPaths || [];
 }
 
-export default class ExpressKit {
+export default class Expresskit {
 
   public static server = express();
 
-  public static start(config?: IExpressKitConfig ) {
+  public static start(config?: IExpresskitConfig ) {
     // TODO: es6 node does not support defaults in the arguments.
     //       Once this becomes available use `= {}` as the default value
     config = config || {}
     
-    initDefaultExpressKitConfig(config);
+    initDefaultExpresskitConfig(config);
     
     process.env.TZ = config.timezone;
     
