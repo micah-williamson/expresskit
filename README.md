@@ -41,9 +41,7 @@ Developers using Java and C# frameworks are familiar with annotations when writi
 
 [Authentication not Authorization](auth/#authentication)
 
-[Auth is a Resolution](auth/#resolution)
-
-[Auth and AuthHandler](auth/#use)
+[Auth and AuthHandler](auth/#auth)
 
 **Rules**
 
@@ -57,8 +55,6 @@ Developers using Java and C# frameworks are familiar with annotations when writi
 
 [Data Scrubbing](dto/#scrubbing)
 
----
-
 <a name="prerequisites"></a>
 ## Prerequisites
 
@@ -69,8 +65,6 @@ Developers using Java and C# frameworks are familiar with annotations when writi
 [Typescript >1.8.0](https://www.npmjs.com/package/typescript)
 
 [ts-node >0.9.0](https://www.npmjs.com/package/ts-node)
-
----
 
 
 <a name="getexpresskit"></a>
@@ -110,8 +104,6 @@ so you don't actually build js files everywhere, which is very annoying.
     ]
 }
 ```
-
----
 
 <a name="helloworld"></a>
 ## Hello World Demo
@@ -168,8 +160,6 @@ to `http://localhost:8000/hello`, we will get the response "Hello World".
 Want more examples? See the [Expresskit Seed Project](). Want to learn more about
 Expresskit and it's many features? Keep reading!
 
-----
-
 <a name="startupoptions"></a>
 ## Startup Options
 
@@ -194,9 +184,6 @@ Possible options are-
 | timezone    | The default timezone of the application. Sets `process.env.TZ` to this property for convenience.                                             | TZ (GMT 0) |
 | staticFiles | An array of files and their URIs to serve statically when requested.                                                                         | []         |
 | staticPaths | An array of paths and their URIs to serve statically when requested. All files and child directories of this path will be served statically. | []         |
-
-
----
 
 <a name="staticcontent"></a>
 ## Static Content
@@ -250,8 +237,6 @@ http://localhost:8000/
 http://localhost:8000/index.html
 http://localhost:8000/images/fooimage.jpg
 ```
-
----
 
 ## Keep Reading
 

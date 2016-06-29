@@ -1,9 +1,24 @@
-## Auth
+Auth
+----
 
-A fair amount of routes require some sort of authentication. There needs to be a
-context behind the request. For example, if the `GET => /userMessages` route is called,
-we need to know which user is requesting their messages. This not only helps
-us give context to the request but provides a basic level of security.
+Auth behaves by resolving some sort of authorization value for the route. Because
+it could be used to generically resolve anything, Auth will eventually become `Resolver`.
+However, the behavior will largely remain the same. 
+
+<a name="authenticationnotauthorization"></a>
+## Authentication, not Authorization
+
+Keep in mind that Authentication and Authorization are different. When you are
+Authenticating a request your are finding the identity of the user behind that
+request. When a user logs in, they can use an access token to authenticate future
+requests, but there may be some operation that they are unable to perform as that
+user.
+
+Once you have Authenticated a request, see [Rules](/rules) for ways to provide
+Authorization.
+
+<a name="auth"></a>
+## AuthHandle and Auth
 
 ```typescript
 import Route from 'expresskit/route';
