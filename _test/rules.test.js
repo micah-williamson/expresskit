@@ -108,7 +108,7 @@ describe('Rules', () => {
   describe('Complex', () => {
 
     it('should handle complex rules by passing params, queries, bodies, and auths', (done) => {
-      request.post('http://localhost:8000/rules/complex/a', {headers: {c: 'c'}, body: 'd'}, (err, response, body) => {
+      request.post('http://localhost:8000/rules/complex/a?b=b', {headers: {c: 'c'}, json: {d: 'd'}}, (err, response, body) => {
         assert.equal(err, null);
         assert.equal(body, 'fooauthabcd');
         assert.equal(response.statusCode, 500);

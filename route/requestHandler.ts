@@ -27,7 +27,7 @@ export class RequestHandlerService {
 
       let rules = Reflect.getMetadata('Rules', route.object, route.key) || [];
     
-      RuleService.runRules(route, rules).then(() => {
+      RuleService.runRules(rules, request).then(() => {
         InjectorService.run(route.object, route.key, request).then((response: Response) => {
           ResponseHandlerService.handleResponse(route, expressResponse, response);
         }).catch((response: Response) => {
