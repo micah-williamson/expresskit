@@ -1,4 +1,5 @@
-**Rules**
+Rules
+-----
 
 [Validate and Authorize](#validateandauthorize)
 
@@ -167,15 +168,15 @@ this will be fixed with `Resolutions` in a future update.
 
 ## Keep Reading
 
-[Routing](route/README.md)
+[Routing](/route/README.md)
 
-[Middleware](middleware/README.md)
+[Middleware](/middleware/README.md)
 
-[Auth](auth/README.md)
+[Auth](/auth/README.md)
 
-[Rules](rule/README.md)
+[Rules](/rule/README.md)
 
-[DTOs](dto/README.md)
+[DTOs](/dto/README.md)
 
 ## More Links
 
