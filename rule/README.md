@@ -180,7 +180,7 @@ this will be fixed with `Resolutions` in a future update.
 
 ## More Links
 
-[Expresskit Seed Project]()
+[Expresskit Seed Project](https://github.com/iamchairs/expresskit-seed)
 
 [Github](https://github.com/iamchairs/expresskit)
 

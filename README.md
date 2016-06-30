@@ -159,7 +159,7 @@ export class HelloWorldRouter {
 Now if we start this through the command `ts-node index.ts` and go
 to `http://localhost:8000/hello`, we will get the response "Hello World".
 
-Want more examples? See the [Expresskit Seed Project](). Want to learn more about
+Want more examples? See the [Expresskit Seed Project](https://github.com/iamchairs/expresskit-seed). Want to learn more about
 Expresskit and it's many features? Keep reading!
 
 <a name="startupoptions"></a>
@@ -254,7 +254,7 @@ http://localhost:8000/images/fooimage.jpg
 
 ## More Links
 
-[Expresskit Seed Project]()
+[Expresskit Seed Project](https://github.com/iamchairs/expresskit-seed)
 
 [Github](https://github.com/iamchairs/expresskit)
 
