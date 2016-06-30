@@ -8,7 +8,7 @@ export function Context() {
   return function(object: any, method: string, index: number) {
     let injectable: IInjectable = {
       index: index,
-      arguments: [name]
+      arguments: []
     };
 
     let injectionConfig: IInjectionConfig = {
@@ -23,7 +23,7 @@ export function Context() {
 export class ContextInjectionResolver extends OptionalResolver implements IInjectionResolver {
 
   public resolve(injectable: IInjectable, request: ExpressRequest): Promise<any> {
-    return request;
+    return Promise.resolve(request);
   }
   
 }

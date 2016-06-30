@@ -54,10 +54,10 @@ export default class UserRouter {
 }
 ```
 
-When a route requested, these method will get called. The route method can handle the
+When a route is requested, it's method will get called. The route method can handle the
 request directly or use other services to help resolve the request. It is recommended
-to keep routes inside of routers, and keep your routers thin. Treat your router like
-a Controller.
+to keep routes inside of routers, keep business logic in services, and keep your routers
+thin. Treat your router like a Controller.
 
 You may have noticed the router methods are static, this is for our convenience. Since
 the router and most services are stateless or act in some global capacity, static classes
@@ -99,7 +99,7 @@ error throwing as a substitution for route rejection.
 
 The second is the `Expresskit Response`. This response is an object containing
 the `http status code` and data payload. This can be returned or resolved at any
-time and has the benefit of giving you control over the returned http statuc code.
+time and has the benefit of giving you control over the returned http status code.
 Here is an example of how they are used-
 
 If that seems a little heavy handed, there will be more options in the future in the
@@ -115,13 +115,13 @@ used:
 
 **401** - Is the default for any request that fails to resolve `authentication`.
 
-**500** - Is the default for any rejected request including `rules`.
+**500** - Is the default for any rejected request, thrown error, or failed `rule`.
 
 <a name="injectables"></a>
 ## Injectables
 
 With vanilla Express you are given the request and the response. In Expresskit routes
-your don't have access to the response and should only use the request if working with
+you don't have access to the response and should only use the request if working with
 not-yet-supported 3rd party middleware. More on that in the `Middleware` section.
 Instead you inject the properties of a request you want to use. Injectables are an
 important part of Expresskit and one of the primary reasons for it's existance.
@@ -152,14 +152,14 @@ becomes available in the page variable.
 `Query` params don't need to be defined in the route uri. When `/user/search/1?q=foo`
 is requested, `foo` will be available in the search variable.
 
-`Header` is pulled from the request header. In update, the Authorization header is
+`Header` is pulled from the request header. In the above `updateUser` example, the Authorization header is
 expected.
 
 `Body` is payload of the request (sent by `PUT` and `POST` requests). If the payload
 is JSON this will be a parsed JSON object.
 
 All injectables except `Body` are **required** by default. When the route is requested,
-if it cannot resolved the property from the request, it will respond with a 400 error
+if it cannot resolve the property from the request, it will respond with a 400 error
 and a message similar to-
 
 
@@ -189,7 +189,7 @@ own.
 <a name="router"></a>
 ## Routers
 
-Defining a your router class as a `Router` isn't strictly necessary as this time.
+Defining a your router class as a `Router` isn't strictly necessary at this time.
 But it can help you cleanup your paths and in some cases cleanup redundancies (see
 Middleware). By defining a router you can set the `base path` for the routes defined
 in the router class.

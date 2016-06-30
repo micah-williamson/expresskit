@@ -41,7 +41,7 @@ Developers using Java and C# frameworks are familiar with annotations when writi
 
 [Authentication not Authorization](auth/README.md#authentication)
 
-[Auth and AuthHandler](auth/README.md#auth)
+[Auth and AuthHandler](auth/README.md#authhandler)
 
 **Rules**
 
@@ -84,8 +84,8 @@ npm install --save expresskit
 Because we are using Typescript, you will need a tsconfig.
 This should point to your `index.ts` file. `experimentalDecorators`
 should be set to **true**. If you are using `ts-node` you won't need
-to worry about where files get build to. However, you may want to set the `outDir`
-so you don't actually build js files everywhere, which is very annoying.
+to worry about where files get built to. However, you may want to set the `outDir`
+so you don't accidentally build js files everywhere, which is very annoying.
 
 
 ```json
@@ -182,7 +182,7 @@ Possible options are-
 | Option      | Description                                                                                                                                  | Default    |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------|------------|
 | port        | The port the server listens to for incoming requests.                                                                                        | 8000       |
-| compress    | Adds application-wide compression to responses.                                                                                              | false      |
+| compression | Adds application-wide compression to responses.                                                                                              | false      |
 | timezone    | The default timezone of the application. Sets `process.env.TZ` to this property for convenience.                                             | TZ (GMT 0) |
 | staticFiles | An array of files and their URIs to serve statically when requested.                                                                         | []         |
 | staticPaths | An array of paths and their URIs to serve statically when requested. All files and child directories of this path will be served statically. | []         |
@@ -192,8 +192,8 @@ Possible options are-
 
 There may be cases (i.e. if your client is bundled with your server) where you'l
 want to serve files statically. That is, when a file like `localhost:8000/index.html`
-is requested, no route is used to handle that request but the file itself will be sent
-instead. You can set entire directories as static where the files in them and their
+is requested, no route is used to handle that request but the file itself will be sent.
+You can set entire directories as static where the files in them and their
 child directories can be access directly, or you can set specific files as static.
 
 Both `staticFiles` and `staticPaths` are defined in the same format. Each staticFile

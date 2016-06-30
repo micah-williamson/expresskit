@@ -13,9 +13,9 @@ Rules
 Rules can be used to validate and authorize requests. Most requests require some
 checks to make sure the operation is safe and can be performed by the requester.
 For example, you wouldn't want a user updating another user's information, and
-you wouldn't want a request attempting to update a resource that doesn't exist hit
-the database. So rules can be used as a gatekeeper on requests. They should not be
-used to manipulate the request (see [Middleware](/middleware)) and do not resolve
+you wouldn't want a request attempting to update a resource that doesn't exist, hit
+the database. So rules can be used as a gatekeeper for requests. They should not be
+used to manipulate the request (see [Middleware](/middleware/README.md)) and do not resolve
 any values themselves.
 
 A Rule must return a promise. If the promise is resolved with anything other than
@@ -80,14 +80,14 @@ export class UserRouter {
 }
 ```
 
-With Rules we can stop worry about the validity of the request and focus on
-fulfilling it.
+With Rules we can cut down on the code needed to validate requests, and focus on the
+logic of fulfilling the requet.
 
 <a name="combine"></a>
 ## Combining Rules
 
 A route may have multiple rules. Instead of creating a Rule for each route, you
-can create specialized rules that can be mixed and matches with others. Lets say
+can create specialized rules that can be mixed and matched with others. Lets say
 we are selling *Widgets* and on a purchase of a Widget we need to make sure that
 Widget is in stock and the User has enough money in their account. We can create
 a `CanPurchaseWidget` Rule, or we can create two rules- `IsWidgetStocked` and 

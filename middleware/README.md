@@ -41,7 +41,7 @@ export class UserRouter {
 ```
 
 The cookie-parser middleware adds cookies to the request object. At the time of
-writing this, `@Cookie` is not available as an injectable. In this case we can
+writing this, `Cookie` is not available as an injectable. In this case we can
 use the `@Context` decorator to get the the express request and use this middleware.
 
 ```typescript
@@ -60,9 +60,9 @@ export class UserRouter {
 ## RouterMiddleware
 
 To add middleware to a collection of routes you can add it to the Router itself.
-To add middleware to a route use the `RouteMiddleware` decorator. Keep in mind that
+To add middleware to a router use the `RouterMiddleware` decorator. Keep in mind that
 for this to work your router must be declared as such using the `Router` decorator
-mentioned in the [Router](/routing/#router) section of the routes README.
+mentioned in the [Router](/route/README.md#router) section of the routes README.
 
 ```typescript
 declare let require: any;

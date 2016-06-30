@@ -34,6 +34,15 @@ describe('Basic Routing', () => {
             });
         });
 
+        it('should resolve the context', (done) => {
+            request('http://localhost:8000/basic/context?foo=bar', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'bar');
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
         it('should fail if required query params arent passed', (done) => {
             request('http://localhost:8000/basic/query', (err, response, body) => {
                 assert.equal(err, null);

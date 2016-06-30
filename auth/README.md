@@ -6,11 +6,9 @@ Auth behaves by resolving some sort of authorization value for the route. Becaus
 it could be used to generically resolve anything, Auth will eventually become `Resolution`.
 However, the behavior will largely remain the same. 
 
-**Auth** (In the future: Resolutions)
-
 [Authentication not Authorization](#authenticationnotauthorization)
 
-[Auth and AuthHandler](#auth)
+[Auth and AuthHandler](#authhandler)
 
 <a name="authenticationnotauthorization"></a>
 ## Authentication, not Authorization
@@ -21,10 +19,10 @@ request. When a user logs in, they can use an access token to authenticate futur
 requests, but there may be some operation that they are unable to perform as that
 user.
 
-Once you have Authenticated a request, see [Rules](/rules) to provide
+Once you have Authenticated a request, see [Rules](/rule/README.md) to provide
 Authorization.
 
-<a name="auth"></a>
+<a name="authhandler"></a>
 ## Auth and AuthHandler
 
 The `Auth` decorator is used to resolve the authentication resource for a request.

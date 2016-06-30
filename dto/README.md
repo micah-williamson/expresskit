@@ -1,7 +1,7 @@
 DTO
 ---
 
-DTO (Data Transfer Object) Validation picks up where [Rules](/rule) left off. Data
+DTO (Data Transfer Object) Validation picks up where [Rules](/rule/README.md) left off. Data
 can get complicated with multiple rules for each property. Writing rules for this
 is exhaustive, so DTOs and the `Validate` decorator provide an alternative.
 Additionally, `ScrubIn` and `ScrubOut` decorators conveniently eliminate properties
@@ -14,9 +14,10 @@ coming in and properties going out.
 <a name="validation"></a>
 ## Property Validation
 
-Currenlty there is no formal definition of a "DTO", but a collection of validation
+Currently there is no formal definition of a "DTO", but a collection of validation
 metadata on class properties. The `Validate` decorator takes a validation object
-with rules for validation.
+with rules for validation. Keep in mind that **property validation only applies
+to data coming in**.
 
 ```typescript
 export class User {
@@ -26,6 +27,8 @@ export class User {
   public someProperty: string;
 }
 ```
+
+The following rules can be used in the validation object.
 
 **Options**
 
@@ -43,9 +46,9 @@ export class User {
 
 **Error Reporting**
 
-When a validation rule is not met a default message will be returned with a `400`
+When a validation rule is not met, a default message will be returned with a `400`
 error code. If you are going to display this message then you might want to
-define your own error messages. Instead of showing the client "username did not 
+define your own error messages. For example: Instead of showing the client "username did not 
 satisfy the pattern /^[\w\d]+$/", you may instead want the error to read "Please
 use alphanumerica characters for your Username". To do that, the value of the
 validation rule becomes a tuple, where the first item in the array is the rule,
@@ -58,8 +61,7 @@ export class User {
   // With custom message
   @Validate({
     required: [true, 'Please enter a Username'],
-    pattern: [/^[\w\d]+$/, 'Please
-use alphanumerica characters for your Username']
+    pattern: [/^[\w\d]+$/, 'Please use alphanumerica characters for your Username']
   })
   public username: string;
 
@@ -75,7 +77,7 @@ use alphanumerica characters for your Username']
 **Body**
 
 Validation is applied to the Body of a request. When using the `Body` decorator, pass
-the DTO to validate again as the first parameter.
+the DTO to validate against as the first parameter.
 
 ```typescript
 export class UserRouter {
@@ -88,10 +90,10 @@ When a DTO is provided to the Body decorator, it is validated against the valida
 rules of that DTO. Additionally, when a DTO is used, the __request is required to have
 a body__. If a body is not present, a `400` error will be sent.
 
-<a name="scurbbing"></a>
+<a name="scrubbing"></a>
 ## Data Scrubbing
 
-You may want to scrub data coming and going out. When data is scrubbed in, use the
+You may want to scrub data coming in and going out. When data is scrubbed in, use the
 `ScrubIn` decorator. When going out, use the `ScrubOut` decorator.
 
 Use `ScrubIn` for **Read-Only** properties. 
