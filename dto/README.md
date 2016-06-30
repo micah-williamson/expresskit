@@ -1,61 +1,108 @@
-## Validation and Response Types
+DTO
+---
 
-With Expresskit your can define simple DTOs and Response Types on your routes. When you define a DTO,
-you can add validation rules for the DTO. If a request comes in that is expecting that DTO, the request
-will fail with a `400: Bad Request` if it does not satisfy validation.
+DTO (Data Transfer Object) Validation picks up where [Rules](/rule) left off. Data
+can get complicated with multiple rules for each property. Writing rules for this
+is exhaustive, so DTOs and the `Validate` decorator provide an alternative.
+Additionally, `ScrubIn` and `ScrubOut` decorators conveniently eliminate properties
+coming in and properties going out.
 
-To define a DTO, just create a standard class and begin decorating it's properties.
+[Property Validation](dto/#validation)
 
-Example:
+[Data Scrubbing](dto/#scrubbing)
+
+<a name="validation"></a>
+## Property Validation
+
+Currenlty there is no formal definition of a "DTO", but a collection of validation
+metadata on class properties. The `Validate` decorator takes a validation object
+with rules for validation.
 
 ```typescript
-import {Validate, ScrubIn, ScrubOut, ResponseType) from 'expresskit/dto';
-
 export class User {
   @Validate({
-    required: true,
-    type: 'string'
+    ... validation rules
   })
-  public id: string;
+  public someProperty: string;
+}
+```
 
+**Options**
+
+| Rule      | Description                                                                                     | Possible Values                       | Example                    |
+|-----------|-------------------------------------------------------------------------------------------------|---------------------------------------|----------------------------|
+| required  | Set to true if this property is required on this DTO. Fails if the property is undefined.       | true, false                           | true                       |
+| type      | Ensures the value received is of this type. Fails the value is not the given type.              | 'string', 'number', 'object', 'array' | 'string'                   |
+| minLength | Ensures the string value length is at least this.                                               | 0 to Infinity                         | 10                         |
+| maxLength | Ensures the string value length is not greater than this.                                       | 0 to Infinity                         | 20                         |
+| min       | Ensures the numerical value is at least this.                                                   | -Infinity to Infinity                 | 10                         |
+| max       | Ensures the numerical value is not greater than this.                                           | -Infinity to Infinity                 | 20                         |
+| pattern   | Validates if the string value given satisfies this pattern through the RegExp.test(str) method. | RegExp                                | /^[\w\d]+$/ (alphanumeric) |
+| values    | Ensures the string value given is one of these values.                                          | CSV                                   | 'red,blue,green'           |
+
+
+**Error Reporting**
+
+When a validation rule is not met a default message will be returned with a `400`
+error code. If you are going to display this message then you might want to
+define your own error messages. Instead of showing the client "username did not 
+satisfy the pattern /^[\w\d]+$/", you may instead want the error to read "Please
+use alphanumerica characters for your Username". To do that, the value of the
+validation rule becomes a tuple, where the first item in the array is the rule,
+and the second is the failing message.
+
+```typescript
+import {Validate} from 'expresskit/dto';
+
+export class User {
+  // With custom message
   @Validate({
-    required: true,
-    type: 'string',
-    minLength: 8,
-    maxLength: 32,
-    pattern: [/^[\w\d]+$/, 'Only alphanumeric values allowed']
+    required: [true, 'Please enter a Username'],
+    pattern: [/^[\w\d]+$/, 'Please
+use alphanumerica characters for your Username']
   })
   public username: string;
 
+  // Without custom message
   @Validate({
     required: true,
-    type: 'string',
-    min: 13,
-    max: [120, 'I doubt it']
-  })
-  public age: number;
-
-  @Validate({
-    required: true,
-    type: 'string'
+    pattern: /^[\w\d-_]+@[\w\d-_]+\.[\w\d]+$/
   })
   public email: string;
+}
+```
 
-  @Validate({
-    required: true,
-    type: 'string',
-    minLength: 8,
-    maxLength: 32,
-    pattern: [/[\w\d\s]/, 'At least one special character is required']
-  })
-  @ScrubOut()
-  public password: string;
+**Body**
 
-  @Validate({
-    type: 'string',
-    values: 'F,M'
-  })
-  public gender: string;
+Validation is applied to the Body of a request. When using the `Body` decorator, pass
+the DTO to validate again as the first parameter.
+
+```typescript
+export class UserRouter {
+  @Route('POST', '/user')
+  public static createUser(@Body(User) user: User) {}
+}
+```
+
+When a DTO is provided to the Body decorator, it is validated against the validation
+rules of that DTO. Additionally, when a DTO is used, the __request is required to have
+a body__. If a body is not present, a `400` error will be sent.
+
+<a name="scurbbing"></a>
+## Data Scrubbing
+
+You may want to scrub data coming and going out. When data is scrubbed in, use the
+`ScrubIn` decorator. When going out, use the `ScrubOut` decorator.
+
+Use `ScrubIn` for **Read-Only** properties. 
+
+```typescript
+import {ScrubIn} from 'expresskit/dto';
+
+public class User {
+  public id: string;
+
+  public username: string;
 
   @ScrubIn()
   public created: string;
@@ -63,41 +110,51 @@ export class User {
   @ScrubIn()
   public updated: string;
 }
+```
+
+Use `ScrubOut` for sensitive data. In addition to using ScrubOut, you will need to
+use the `ResponseType` decorator on your route. Without ResponseType, the route can't
+determine you are responding with a DTO.
+
+```typescript
+import {ScrubOut, ResponseType} from 'expresskit/dto';
+
+public class User {
+  public id: string;
+
+  public username: string;
+
+  @ScrubOut()
+  public password: string;
+}
 
 export class UserRouter {
-  @Route('PUT', '/user')
+  @Route('GET', '/user/:id')
   @ResponseType(User)
-  public updateUser(@Body(User) update: User) {
-    return UserService.updateUser(update);
-  }
+  public static getUser(@Param('id') userId: string): User {}
 }
 ```
 
-In addition to the rule for validation, a custom reason for why validation failed can be given. To do this, a tuple is used where the
-first value is the rule and the second is the reason.
+## Keep Reading
 
-### Validation Options
+[Routing](routing/)
 
-**required: boolean** - Fails validation if the incoming request does not contain this property.
+[Middleware](middleware/)
 
-**type: any** - Fails if the property coming in is not this type. Possible values are string, number, Object, and Array.
+[Auth](auth/)
 
-**minLength: number** - Fails validation if the incoming string exists and does not have the minimum length.
+[Rules](rules/)
 
-**maxLength: number** - Fails validation if the incoming string exists and does not have the maximum length.
+[DTOs](dtos/)
 
-**min: number** - Fails validation if the incoming number is lower than this value.
+## More Links
 
-**max: number** - Fails validation if the incoming number is higher than this value.
+[Expresskit Seed Project]()
 
-**pattern: RegExp** - Fails validation if the incoming request does not match the pattern.
+[Github](https://github.com/iamchairs/expresskit)
 
-**values: string** - Values should be a csv of possible values. This should only be used for simple string or number types.
+[Issues](https://github.com/iamchairs/expresskit/issues)
 
-### Scrubbing
+[NPM](https://www.npmjs.com/package/expresskit)
 
-For convenience sake, you may want to scrub data going in or out. For example, you don't want the update data to contain the `created` or `updated` datetime.
-In in all cases you don't want the password available on any request. Traditionally you'd have to scrub these properties manually, but using `ScrubIn` and `ScrubOut` you can
-implement scrubbing with a decoration.
-
-To use `ScrubOut` you need to set the ResponseType of the route.
+[Twitter](https://twitter.com/micahwllmsn)

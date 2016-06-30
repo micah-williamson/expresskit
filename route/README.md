@@ -114,9 +114,7 @@ used:
 
 **401** - Is the default for any request that fails to resolve `authentication`.
 
-**403** - Is the default for any request that fails to pass the route `rules`.
-
-**500** - Is the default for any rejected request.
+**500** - Is the default for any rejected request including `rules`.
 
 <a name="injectables"></a>
 ## Injectables

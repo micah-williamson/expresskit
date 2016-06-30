@@ -1,70 +1,99 @@
 Auth
 ----
 
+
 Auth behaves by resolving some sort of authorization value for the route. Because
-it could be used to generically resolve anything, Auth will eventually become `Resolver`.
+it could be used to generically resolve anything, Auth will eventually become `Resolution`.
 However, the behavior will largely remain the same. 
+
+**Auth** (In the future: Resolutions)
+
+[Authentication not Authorization](auth/#authenticationnotauthorization)
+
+[Auth and AuthHandler](auth/#auth)
 
 <a name="authenticationnotauthorization"></a>
 ## Authentication, not Authorization
 
 Keep in mind that Authentication and Authorization are different. When you are
-Authenticating a request your are finding the identity of the user behind that
+Authenticating a request you are finding the identity of the user behind that
 request. When a user logs in, they can use an access token to authenticate future
 requests, but there may be some operation that they are unable to perform as that
 user.
 
-Once you have Authenticated a request, see [Rules](/rules) for ways to provide
+Once you have Authenticated a request, see [Rules](/rules) to provide
 Authorization.
 
 <a name="auth"></a>
-## AuthHandle and Auth
+## Auth and AuthHandler
+
+The `Auth` decorator is used to resolve the authentication resource for a request.
+We will need to write a method that provides that resolution, so that's where we'l
+begin.
+
+An `AuthHandler` decorator can be used to define a method used to resolve the `Auth`
+resource. Our handler method is an `injectable` method that can inject contextual
+properties from the route. Because of this, we can use decorators like `Header` to
+get the Authorization header of the request.
 
 ```typescript
-import Route from 'expresskit/route';
-import Auth from 'expresskit/auth';
-
-export default class UserRouter {
-  @Route('GET', '/user')
-  public static getUserMessages(@Auth() user: User) {
-    
-  }
-}
-```
-
-How is authentication described? This is up to the developer to implement using
-the `@AuthHandler()` decorator. An Authentication Handler needs a name, in this case we'l name it 'User'. As most applications only have one Authentication Handler, we can set this as the default Authentication Handler by setting the optional second parameter of the decorator to `true`.
-
-Authentication Handler resolvers can be injected with route properties like route methods. So in our userAuthentication method we can easily obtain the Authorization header.
-
-```typescript
-import AuthHandler from 'expresskit/auth/handler';
-import Response from 'expresskit/route/response';
+import {AuthHandler} from 'expresskit/auth';
 import {Header} from 'expresskit/property';
 
-export default class User {
-  public id: number;
-
-  public username: string;
-
-  public password: string;
-
-  @AuthHandler('User', true)
-  public static userAuthentication(@Header('Authorization') authorizationHeader: string): User {
-    // use the authorization header to locate the correct user
-    return new User();
-    
-    // or
-    return new Promise.resolve(new User());
-    
-    // or
-    return new Promise.reject(new Response(401, 'Not logged in'));
+export class AuthService {
+  @AuthHandler('User')
+  public static resolveAuth(@Header('Authorization') auth: string) {
+    // Do some sort of authenticating here and return the resource
+    return {userId: 1, token: auth};
   }
 }
 ```
 
-Because this is the default Authentication Handler we can call it without naming it - `@Auth()`. If we had multiple Authentication Handlers, or wanted to be verbose, we can call other Handlers by passing the name in Auth- `@Auth('User')`.
+This handler will (ideally) use the Authorization header to authenticate the request,
+and return some information about *who* is making the request. With this we can now
+use the `Auth` decorator to authenticate our routes.
 
-You can "Fail" authentication by returning nothing, returning a rejected promise, or by
-returning a `Response` with an error status. If authentication fails, and no `Response`
-is given, the request will fail with a `401 Unauthenticated` error code.
+```typescript
+import {Auth} from 'expresskit/auth';
+import {Route} from 'expresskit/route';
+
+// Make sure the compiler knows to include this at some point since we don't
+// directly call any methods on AuthService
+import './auth.service.ts';
+
+export class UserRouter {
+
+  @Route('PUT', '/user')
+  public static updateUser(@Auth('User') auth: any, @Body() update: any) {
+    if(auth.userId === update.userId) {
+      // Do update
+    }
+  }
+
+}
+
+```
+
+## Keep Reading
+
+[Routing](routing/)
+
+[Middleware](middleware/)
+
+[Auth](auth/)
+
+[Rules](rules/)
+
+[DTOs](dtos/)
+
+## More Links
+
+[Expresskit Seed Project]()
+
+[Github](https://github.com/iamchairs/expresskit)
+
+[Issues](https://github.com/iamchairs/expresskit/issues)
+
+[NPM](https://www.npmjs.com/package/expresskit)
+
+[Twitter](https://twitter.com/micahwllmsn)
