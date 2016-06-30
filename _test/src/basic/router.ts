@@ -1,6 +1,5 @@
-import Route from '../../../route';
-import Response from '../../../route/response';
-import {Param, Query, Body} from '../../../property';
+import {Route, Response} from '../../../route';
+import {Param, Query, Body, Context} from '../../../property';
 
 export class UserRouter {
     @Route('GET', '/basic')
@@ -25,6 +24,11 @@ export class UserRouter {
         }
 
         return 'optional';
+    }
+
+    @Route('GET', '/basic/context')
+    public static getContext(@Context() req: any) {
+        return req.query.foo;
     }
 
     @Route('GET', '/basic/errorthrown')

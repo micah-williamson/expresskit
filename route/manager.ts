@@ -1,27 +1,46 @@
 declare var require: any;
 declare var __dirname: any;
 
-import {IProperty, PropertyType} from '../property';
+import {Reflect} from '../reflect';
+
 import {IStaticUriPath} from './static';
-import RequestHandlerService from './requestHandler';
-import AuthManager from '../auth/manager';
-import fatal from '../error';
+import {RequestHandlerService} from './requestHandler';
+import {AuthManager} from '../auth/manager';
+import {fatal} from '../error';
 
 var express = require('express');
 var path = require('path');
 
 export type RouteMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+export interface IRouter {
+  mount: string;
+  object: any;
+  expressRouter: any;
+}
+
 export interface IRoute {
   method: RouteMethod;
   path: string;
   object: any;
   key: string;
-  properties: IProperty[];
-}
+};
 
-export default class RouteManager {
+export class RouteManager {
+  public static routers: IRouter[] = [];
+
   public static routes: IRoute[] = [];
+
+  /**
+   * Registers a router with the route manager. Has no function other than handling middleware
+   */
+  public static registerRouter(object: any, mount: string) {
+    this.routers.push({
+      mount: mount,
+      object: object,
+      expressRouter: null
+    });
+  }
 
   /**
    * Registers a route to RouteManager.routes
@@ -38,8 +57,7 @@ export default class RouteManager {
           method: method,
           path: path,
           object: object,
-          key: key,
-          properties: object[key].properties || []
+          key: key
         });
       } else {
         let error = `Unable to register route: ${method} > ${path} to ${object.prototype.constructor.name}.${key}. This path is already registered to ${existingRoute.object.prototype.constructor.name}.${key}`;
@@ -51,35 +69,53 @@ export default class RouteManager {
     }
   }
 
-  public static registerRouteProperty(object: any, method: string, property: IProperty) {
-    let properties: IProperty[] = object[method].properties = object[method].properties || [];
-    let existingProperty = false;
-
-    properties.forEach((prop) => {
-      if(prop.type === property.type && prop.name === property.name) {
-        existingProperty = true;
-      }
-    });
-
-    if(!existingProperty) {
-      properties.push(property);
-    } else {
-      let error = `Unable to register signature property: ${property.type} ${property.name} to ${object.prototype.constructor.name}.${method}. This Type/Name combination already exists on the route.`;
-      fatal(new Error(error));
-    }
-  }
-
   /**
    * Binds the routes to the given express application
    * @param {any} application [description]
    */
   public static bindRoutes(application: any) {
+    // Initialize routers
+    this.routers.forEach((router) => {
+      let routerMiddleware = Reflect.getMetadata('Middlewares', router.object) || [];
+      let expressRouter = router.expressRouter;
+
+      if(!expressRouter) {
+        expressRouter = router.expressRouter = express.Router();
+      }
+
+      routerMiddleware.forEach((middleware: Function) => {
+        expressRouter.use(middleware);
+      });
+    });
+
+    // Bind routes
     this.routes.forEach(route => {
       console.log(`[DEBUG] Bound route: ${route.method} > ${route.path} to ${route.object.prototype.constructor.name}.${route.key}.`);
 
-      let expressMethod = this.getExpressMethod(application, route.method);
-      expressMethod.call(application, route.path, RequestHandlerService.requestHandlerFactory(route));
+      let expresskitRouter = this.getRouterByClass(route.object);
+      let router: any;
+
+      if(expresskitRouter) {
+        router = expresskitRouter.expressRouter;
+      } else {
+        router = application;
+      }
+
+      // Binding route middlewares
+      let routeMiddleware = Reflect.getMetadata('Middlewares', route.object, route.key) || [];
+      routeMiddleware.forEach((middleware: Function) => {
+        router.use(route.path, middleware);
+      });
+
+      let expressMethod = this.getExpressMethod(router, route.method);
+      expressMethod.call(router, route.path, RequestHandlerService.requestHandlerFactory(route));
     });
+
+    // Bind routers
+    this.routers.forEach((router) => {
+      application.use(router.mount, router.expressRouter);
+    });
+     
   }
   
   /**
@@ -120,6 +156,19 @@ export default class RouteManager {
   }
 
   /**
+   * Gets the router by the object given. If the router doesn't exist, returns null
+   */
+  public static getRouterByClass(object: any) {
+    for(var i = 0; i < this.routers.length; i++) {
+      if(this.routers[i].object === object) {
+        return this.routers[i];
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Gets the route registered to [object].[method]
    * @param {any}    object [description]
    * @param {string} method [description]
@@ -134,24 +183,6 @@ export default class RouteManager {
     });
 
     return route;
-  }
-
-  /**
-   * Returns the property from the route.properties given the type and name
-   * @param {IRoute}            route [description]
-   * @param {RoutePropertyType} type  [description]
-   * @param {string}            name  [description]
-   */
-  public static getRouteProperty(route: IRoute, type: PropertyType, name: string) {
-    let property: IProperty;
-
-    route.properties.forEach((prop) => {
-      if(prop.type === type && prop.name === name) {
-        property = prop;
-      }
-    });
-
-    return property;
   }
 
   /**

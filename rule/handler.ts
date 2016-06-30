@@ -1,14 +1,16 @@
-import {IRuleHandler, default as RuleManager} from './manager';
+import {Reflect} from '../reflect';
+import {IRuleHandler, RuleService} from './service';
 
-export default function RuleHandler(group: string, name: string) {
+export function RuleHandler(name: string) {
   return function(object: any, method: string) {
     let handler: IRuleHandler = {
-      group: group,
       name: name,
       object: object,
       method: method
     };
 
-    RuleManager.registerRuleHandler(handler);
+    RuleService.registerRuleHandler(handler);
+
+    Reflect.defineMetadata('RuleHandler', handler, object, method);
   }
 }

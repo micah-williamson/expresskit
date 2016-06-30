@@ -7,8 +7,8 @@ describe('Auth', () => {
 
         request('http://localhost:8000/auth/foo', (err, response, body) => {
             assert.equal(err, null);
-            assert.equal(response.statusCode, 200);
             assert.equal(body, 'fooauth');
+            assert.equal(response.statusCode, 200);
 
             done();
         });
@@ -22,8 +22,8 @@ describe('Auth', () => {
             }
         }, (err, response, body) => {
             assert.equal(err, null);
-            assert.equal(response.statusCode, 200);
             assert.equal(body, 'barauth');
+            assert.equal(response.statusCode, 200);
 
             done();
         });
@@ -42,20 +42,6 @@ describe('Auth', () => {
         });
     });
 
-    it('should fail authentication with a thrown error and message', (done) => {
-        request('http://localhost:8000/auth/bar', {
-            headers: {
-                Authorization: 'barauth-throwerrormessage'
-            }
-        }, (err, response, body) => {
-            assert.equal(err, null);
-            assert.equal(response.statusCode, 500);
-            assert.equal(body, 'Error: bar');
-
-            done();
-        });
-    });
-
     it('should fail authentication if the handler is rejected', (done) => {
         request('http://localhost:8000/auth/bar', {
             headers: {
@@ -63,8 +49,8 @@ describe('Auth', () => {
             }
         }, (err, response, body) => {
             assert.equal(err, null);
-            assert.equal(response.statusCode, 401);
             assert.equal(body, 'foo');
+            assert.equal(response.statusCode, 401);
 
             done();
         });
@@ -77,8 +63,8 @@ describe('Auth', () => {
             }
         }, (err, response, body) => {
             assert.equal(err, null);
-            assert.equal(response.statusCode, 405);
             assert.equal(body, 'foo');
+            assert.equal(response.statusCode, 405);
 
             done();
         });

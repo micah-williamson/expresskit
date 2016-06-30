@@ -1,7 +1,6 @@
-import Route from '../../../route';
+import {Route} from '../../../route';
 import {Param, Header, Body} from '../../../property';
-import Auth from '../../../auth';
-import AuthHandler from '../../../auth/handler';
+import {Auth, AuthHandler} from '../../../auth';
 import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../dto';
 
 export class User {

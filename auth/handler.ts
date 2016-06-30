@@ -1,6 +1,6 @@
-import {IAuthHandler, default as AuthenticationManager} from './manager';
+import {IAuthHandler, AuthManager} from './manager';
 
-export default function AuthHandler(name: string, isDefault?: boolean) {
+export function AuthHandler(name: string, isDefault?: boolean) {
   return function(object: any, method: string) {
     let handler: IAuthHandler = {
       name: name,
@@ -9,7 +9,6 @@ export default function AuthHandler(name: string, isDefault?: boolean) {
       method: method
     };
 
-    AuthenticationManager.registerAuthenticationHandler(handler);
-    //RouteManager.registerRouteProperty(object, method, property);
+    AuthManager.registerAuthenticationHandler(handler);
   }
 }
