@@ -23,37 +23,39 @@ Developers using Java and C# frameworks are familiar with annotations when writi
 
 **Routing**
 
-[The Basics](routes/#thebasics)
+[The Basics](route/README.md#thebasics)
 
-[Injectables](routes/#thebasics)
+[Asynchronous Requests](route/README.md#async)
 
-[Responding](routes/#thebasics)
+[Expresskit Response](route/README.md#response)
+
+[Injectables](route/README.md#injectables)
 
 **Middleware**
 
-[The Basics](middleware/#introduction)
+[Route](middleware/README.md#route)
 
-[Router](middleware/#router)
-
-[Route](middleware/#route)
+[Router](middleware/README.md#router)
 
 **Auth** (In the future: Resolutions)
 
-[Authentication not Authorization](auth/#authentication)
+[Authentication not Authorization](auth/README.md#authentication)
 
-[Auth and AuthHandler](auth/#auth)
+[Auth and AuthHandler](auth/README.md#auth)
 
 **Rules**
 
-[Validate and Authorize](rules/#validateandauthorize)
+[Validate and Authorize](rule/README.md#validateandauthorize)
 
-[Rule and RuleHandler](rules/#use)
+[Rule and RuleHandler](rule/README.md#use)
+
+[Combining Rules](rule/README.md#combine)
 
 **DTOs**
 
-[Property Validation](dto/#validation)
+[Property Validation](dto/README.md#validation)
 
-[Data Scrubbing](dto/#scrubbing)
+[Data Scrubbing](dto/README.md#scrubbing)
 
 <a name="prerequisites"></a>
 ## Prerequisites
@@ -240,15 +242,15 @@ http://localhost:8000/images/fooimage.jpg
 
 ## Keep Reading
 
-[Routing](routing/)
+[Routing](route/README.md)
 
-[Middleware](middleware/)
+[Middleware](middleware/README.md)
 
-[Auth](auth/)
+[Auth](auth/README.md)
 
-[Rules](rules/)
+[Rules](rule/README.md)
 
-[DTOs](dtos/)
+[DTOs](dto/README.md)
 
 ## More Links
 

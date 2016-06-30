@@ -7,9 +7,9 @@ is exhaustive, so DTOs and the `Validate` decorator provide an alternative.
 Additionally, `ScrubIn` and `ScrubOut` decorators conveniently eliminate properties
 coming in and properties going out.
 
-[Property Validation](dto/#validation)
+[Property Validation](#validation)
 
-[Data Scrubbing](dto/#scrubbing)
+[Data Scrubbing](#scrubbing)
 
 <a name="validation"></a>
 ## Property Validation
@@ -137,15 +137,15 @@ export class UserRouter {
 
 ## Keep Reading
 
-[Routing](routing/)
+[Routing](route/README.md)
 
-[Middleware](middleware/)
+[Middleware](middleware/README.md)
 
-[Auth](auth/)
+[Auth](auth/README.md)
 
-[Rules](rules/)
+[Rules](rule/README.md)
 
-[DTOs](dtos/)
+[DTOs](dto/README.md)
 
 ## More Links
 

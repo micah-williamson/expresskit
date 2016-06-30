@@ -14,6 +14,11 @@ is the point point where the Expresskit request handler takes control.
 
 You can add middleware to a `Route` or a `Router`.
 
+[Route](#route)
+
+[Router](#router)
+
+<a name="route"></a>
 ## RouteMiddleware
 
 To add middleware to a Route use the `RouteMiddleware` decorator.
@@ -51,6 +56,7 @@ export class UserRouter {
 }
 ```
 
+<a name="router"></a>
 ## RouterMiddleware
 
 To add middleware to a collection of routes you can add it to the Router itself.
@@ -86,15 +92,15 @@ export class UserRouter {
 
 ## Keep Reading
 
-[Routing](routing/)
+[Routing](route/README.md)
 
-[Middleware](middleware/)
+[Middleware](middleware/README.md)
 
-[Auth](auth/)
+[Auth](auth/README.md)
 
-[Rules](rules/)
+[Rules](rule/README.md)
 
-[DTOs](dtos/)
+[DTOs](dto/README.md)
 
 ## More Links
 

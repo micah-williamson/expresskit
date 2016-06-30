@@ -7,7 +7,7 @@ Routing
 
 [Expresskit Response](#response)
 
-[Injectables](#thebasics)
+[Injectables](#injectables)
 
 ## The Basics
 
@@ -218,15 +218,15 @@ export class UserRouter {
 
 ## Keep Reading
 
-[Routing](routing/)
+[Routing](route/README.md)
 
-[Middleware](middleware/)
+[Middleware](middleware/README.md)
 
-[Auth](auth/)
+[Auth](auth/README.md)
 
-[Rules](rules/)
+[Rules](rule/README.md)
 
-[DTOs](dtos/)
+[DTOs](dto/README.md)
 
 ## More Links
 

@@ -8,9 +8,9 @@ However, the behavior will largely remain the same.
 
 **Auth** (In the future: Resolutions)
 
-[Authentication not Authorization](auth/#authenticationnotauthorization)
+[Authentication not Authorization](#authenticationnotauthorization)
 
-[Auth and AuthHandler](auth/#auth)
+[Auth and AuthHandler](#auth)
 
 <a name="authenticationnotauthorization"></a>
 ## Authentication, not Authorization
@@ -76,15 +76,15 @@ export class UserRouter {
 
 ## Keep Reading
 
-[Routing](routing/)
+[Routing](route/README.md)
 
-[Middleware](middleware/)
+[Middleware](middleware/README.md)
 
-[Auth](auth/)
+[Auth](auth/README.md)
 
-[Rules](rules/)
+[Rules](rule/README.md)
 
-[DTOs](dtos/)
+[DTOs](dto/README.md)
 
 ## More Links
 

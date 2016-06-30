@@ -1,10 +1,10 @@
 **Rules**
 
-[Validate and Authorize](rules/#validateandauthorize)
+[Validate and Authorize](#validateandauthorize)
 
-[Rule and RuleHandler](rules/#use)
+[Rule and RuleHandler](#use)
 
-[Combining Rules](rules/#combine)
+[Combining Rules](#combine)
 
 <a name="validateandauthorize"></a>
 ## Validate and Authorize
@@ -167,15 +167,15 @@ this will be fixed with `Resolutions` in a future update.
 
 ## Keep Reading
 
-[Routing](routing/)
+[Routing](route/README.md)
 
-[Middleware](middleware/)
+[Middleware](middleware/README.md)
 
-[Auth](auth/)
+[Auth](auth/README.md)
 
-[Rules](rules/)
+[Rules](rule/README.md)
 
-[DTOs](dtos/)
+[DTOs](dto/README.md)
 
 ## More Links
 
