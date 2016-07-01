@@ -1,5 +1,3 @@
-import {Request as ExpressRequest} from 'express';
-
 import {InjectorService} from '../injector/service';
 import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {Response, ResponseType} from '../route/response';
@@ -24,7 +22,7 @@ export function Auth(name?: string) {
 
 export class AuthenticationInjectionResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: ExpressRequest): Promise<any> {
+  public resolve(injectable: IInjectable, request: any): Promise<any> {
     return new Promise((resolve, reject) => { 
       let name = injectable.arguments[0];
       let authResource: IAuthHandler;

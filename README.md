@@ -66,8 +66,7 @@ Developers using Java and C# frameworks are familiar with annotations when writi
 
 [Typescript >1.8.0](https://www.npmjs.com/package/typescript)
 
-[ts-node >0.9.0](https://www.npmjs.com/package/ts-node)
-
+[ntypescript](https://www.npmjs.com/package/ntypescript)
 
 <a name="getexpresskit"></a>
 ## Get Expresskit
@@ -83,16 +82,25 @@ npm install --save expresskit
 
 Because we are using Typescript, you will need a tsconfig.
 This should point to your `index.ts` file. `experimentalDecorators`
-should be set to **true**. If you are using `ts-node` you won't need
-to worry about where files get built to. However, you may want to set the `outDir`
-so you don't accidentally build js files everywhere, which is very annoying.
+should be set to **true**. From this point you should model your build
+configuration to your working process.
 
+If you don't have a process yet or are indifferent, at `module` to "none"
+and `outDir` to "bld". You can build your application by running `ntsc` in
+the root directory of your server, and run the generated `index.js` file
+in the `bld` directory.
+
+```
+ntsc
+cd build
+node index.js
+```
 
 ```json
 {
     "compilerOptions": {
         "target": "es6",
-        "module": "system",
+        "module": "none",
         "moduleResolution": "node",
         "declaration": false,
         "noImplicitAny": true,
@@ -156,8 +164,8 @@ export class HelloWorldRouter {
 }
 ```
 
-Now if we start this through the command `ts-node index.ts` and go
-to `http://localhost:8000/hello`, we will get the response "Hello World".
+Now if we build the server, start it, and go to
+`http://localhost:8000/hello`, we will get the response "Hello World".
 
 Want more examples? See the [Expresskit Seed Project](https://github.com/iamchairs/expresskit-seed). Want to learn more about
 Expresskit and it's many features? Keep reading!

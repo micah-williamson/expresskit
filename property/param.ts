@@ -1,5 +1,3 @@
-import {Request as ExpressRequest} from 'express';
-
 import {InjectorService} from '../injector/service';
 import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {OptionalResolver} from './optional';
@@ -22,7 +20,7 @@ export function Param(name: string) {
 
 export class ParamInjectionResolver extends OptionalResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: ExpressRequest): Promise<any> {
+  public resolve(injectable: IInjectable, request: any): Promise<any> {
     let paramName = injectable.arguments[0];
     let optionalParts = this.getOptionalParts(paramName);
     let val = request.params[optionalParts.name];

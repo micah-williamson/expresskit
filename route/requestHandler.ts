@@ -1,5 +1,4 @@
 import {Reflect} from '../reflect';
-import {Request as ExpressRequest, Response as ExpressResponse} from 'express';
 
 import {IRoute} from './manager';
 import {ResponseHandlerService} from './responseHandler';
@@ -12,7 +11,7 @@ export interface IRequestHandler {
 }
 
 export class RouteInjectionContext {
-  public request: ExpressRequest;
+  public request: any;
 }
 
 
@@ -23,7 +22,7 @@ export class RequestHandlerService {
    * @param {IRoute} route [description]
    */
   public static requestHandlerFactory(route: IRoute): IRequestHandler {
-    return (request: ExpressRequest, expressResponse: ExpressResponse) => {
+    return (request: any, expressResponse: any) => {
 
       let rules = Reflect.getMetadata('Rules', route.object, route.key) || [];
     

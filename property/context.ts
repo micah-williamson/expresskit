@@ -1,5 +1,3 @@
-import {Request as ExpressRequest} from 'express';
-
 import {InjectorService} from '../injector/service';
 import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {OptionalResolver} from './optional';
@@ -22,7 +20,7 @@ export function Context() {
 
 export class ContextInjectionResolver extends OptionalResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: ExpressRequest): Promise<any> {
+  public resolve(injectable: IInjectable, request: any): Promise<any> {
     return Promise.resolve(request);
   }
   

@@ -1,5 +1,3 @@
-import {Request as ExpressRequest} from 'express';
-
 import {InjectorService} from '../injector/service';
 import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {Response} from '../route';
@@ -23,7 +21,7 @@ export function Body(dto?: Object) {
 
 export class BodyInjectionResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: ExpressRequest): Promise<any> {
+  public resolve(injectable: IInjectable, request: any): Promise<any> {
     let dto = injectable.arguments[0];
 
     let body = request.body;
