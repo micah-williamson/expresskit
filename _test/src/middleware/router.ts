@@ -8,12 +8,18 @@ import {RouterMiddleware, RouteMiddleware} from '../../../middleware';
 
 export class MiddlewareService {
   public static routerMiddleware(req: ExpressRequest, res: any, next: any) {
-    req.body.pass = 'router';
+    req.body = {
+      pass: 'router'
+    };
+
     next();
   }
 
   public static routeMiddleware(req: ExpressRequest, res: any, next: any) {
-    req.body.pass = 'route';
+    req.body = {
+      pass: 'route'
+    };
+
     next();
   }
 }

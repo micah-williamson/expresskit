@@ -2,7 +2,9 @@ declare var require: any;
 declare var process: any;
 
 import {RouteManager} from './route/manager';
+import {ExpressServer} from './server/express';
 import {IStaticUriPath} from './route/static';
+import {fatal} from './error';
 
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -15,58 +17,63 @@ export interface IExpresskitConfig {
   staticFiles?: IStaticUriPath[];
   staticPaths?: IStaticUriPath[];
   server?: any;
-}
-
-function initDefaultExpresskitConfig(config: IExpresskitConfig) {
-  config.port = config.port || 8000;
-  config.compression = !!config.compression;
-  config.timezone = config.timezone || 'Z';
-  config.staticFiles = config.staticFiles || [];
-  config.staticPaths = config.staticPaths || [];
+  middleware?: any[];
 }
 
 export default class Expresskit {
 
   public static server: any;
 
-  public static application: any;
+  public static initDefaultExpresskitConfig(config: IExpresskitConfig) {
+    config.port = config.port || 8000;
+    config.compression = !!config.compression;
+    config.timezone = config.timezone || 'Z';
+    config.staticFiles = config.staticFiles || [];
+    config.staticPaths = config.staticPaths || [];
+    
+    this.server = config.server || new ExpressServer(express);
 
-  public static applicationHandle: any;
+    // TODO: legacy hack
+    if(this.server instanceof ExpressServer) {
+      config.middleware = config.middleware || [
+        bodyParser.json({ type: 'application/json' }),
+        bodyParser.urlencoded({extended: true}),
+        bodyParser.text(),
+        bodyParser.raw()
+      ];
+    } else {
+      config.middleware = config.middleware || [];
+    }
+    
+  }
 
   /**
    * Starts an application instance
    */
   public static start(config: IExpresskitConfig = {}): Promise<any> {
     return new Promise((resolve, reject) => {
-      initDefaultExpresskitConfig(config);
+      this.initDefaultExpresskitConfig(config);
       
       process.env.TZ = config.timezone;
 
-      if(config.server) {
-        this.server = config.server;
-        this.application = config.server();
-      } else {
-        this.server = express;
-        this.application = express();
-      }
-      
-      this.application.use(bodyParser.json({ type: 'application/json' }));
-      this.application.use(bodyParser.urlencoded({extended: true}));
-      this.application.use(bodyParser.text());
-      this.application.use(bodyParser.raw());
-      
+      config.middleware.forEach((middleware) => {
+        this.server.use(middleware);
+      });  
+
       if(config.compression) {
-        this.application.use(compression());
+        this.server.use(compression());
       }
 
-      RouteManager.bindStaticPaths(this.server, this.application, config.staticPaths);
-      RouteManager.bindStaticFiles(this.application, config.staticFiles);
-      RouteManager.bindRoutes(this.server, this.application);
+      RouteManager.bindStaticPaths(this.server, config.staticPaths);
+      RouteManager.bindStaticFiles(this.server, config.staticFiles);
+      RouteManager.bindRoutes(this.server);
 
-      this.applicationHandle = this.application.listen(config.port, () => {
+      this.server.listen(config.port, () => {
         console.log(`Started server on port ${config.port}`);
         resolve();
-      });
+      })
+    }).catch((err: any) => {
+      fatal(err);
     });
   }
 
@@ -75,6 +82,6 @@ export default class Expresskit {
    */
   public static stop() {
     console.log('closed application');
-    this.applicationHandle.close();
+    this.server.close();
   }
 }

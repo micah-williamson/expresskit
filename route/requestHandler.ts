@@ -22,18 +22,19 @@ export class RequestHandlerService {
    * @param {IRoute} route [description]
    */
   public static requestHandlerFactory(route: IRoute): IRequestHandler {
-    return (request: any, expressResponse: any) => {
-
+    return function (request: any, expressResponse: any) {
+      let context = {routeScope: this, request: request};
+      
       let rules = Reflect.getMetadata('Rules', route.object, route.key) || [];
-    
+
       RuleService.runRules(rules, request).then(() => {
         InjectorService.run(route.object, route.key, request).then((response: Response) => {
-          ResponseHandlerService.handleResponse(route, expressResponse, response);
+          return ResponseHandlerService.handleResponse(route, expressResponse, response)
         }).catch((response: Response) => {
-          ResponseHandlerService.handleResponse(route, expressResponse, ResponseHandlerService.convertErrorResponse(response));
+          return ResponseHandlerService.handleResponse(route, expressResponse, ResponseHandlerService.convertErrorResponse(response));
         });
       }).catch((response: Response) => {
-        ResponseHandlerService.handleResponse(route, expressResponse, ResponseHandlerService.convertErrorResponse(response));
+        return ResponseHandlerService.handleResponse(route, expressResponse, ResponseHandlerService.convertErrorResponse(response));
       });
       
     }

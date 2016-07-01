@@ -5,10 +5,11 @@ import {Reflect} from '../reflect';
 
 import {IStaticUriPath} from './static';
 import {RequestHandlerService} from './requestHandler';
+import {ExpresskitServer} from '../server';
 import {AuthManager} from '../auth/manager';
+import {ExpresskitRouter} from '../router';
 import {fatal} from '../error';
 
-var express = require('express');
 var path = require('path');
 
 export type RouteMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -16,7 +17,7 @@ export type RouteMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export interface IRouter {
   mount: string;
   object: any;
-  expressRouter: any;
+  expresskitRouter: ExpresskitRouter;
 }
 
 export interface IRoute {
@@ -38,7 +39,7 @@ export class RouteManager {
     this.routers.push({
       mount: mount,
       object: object,
-      expressRouter: null
+      expresskitRouter: null
     });
   }
 
@@ -73,18 +74,18 @@ export class RouteManager {
    * Binds the routes to the given express application
    * @param {any} application [description]
    */
-  public static bindRoutes(server: any, application: any) {
+  public static bindRoutes(server: ExpresskitServer) {
     // Initialize routers
     this.routers.forEach((router) => {
       let routerMiddleware = Reflect.getMetadata('Middlewares', router.object) || [];
-      let expressRouter = router.expressRouter;
+      let expresskitRouter = router.expresskitRouter;
 
-      if(!expressRouter) {
-        expressRouter = router.expressRouter = server.Router();
+      if(!expresskitRouter) {
+        expresskitRouter = router.expresskitRouter = server.Router(router.mount);
       }
 
       routerMiddleware.forEach((middleware: Function) => {
-        expressRouter.use(middleware);
+        expresskitRouter.router.use(middleware);
       });
     });
 
@@ -92,47 +93,51 @@ export class RouteManager {
     this.routes.forEach(route => {
       console.log(`[DEBUG] Bound route: ${route.method} > ${route.path} to ${route.object.prototype.constructor.name}.${route.key}.`);
 
-      let expresskitRouter = this.getRouterByClass(route.object);
-      let router: any;
+      let routerBinding = this.getRouterByClass(route.object);
+      let expresskitRouter: any;
 
-      if(expresskitRouter) {
-        router = expresskitRouter.expressRouter;
+      if(routerBinding) {
+        expresskitRouter = routerBinding.expresskitRouter;
       } else {
-        router = application;
+        expresskitRouter = server.expresskitRouter;
       }
 
       // Binding route middlewares
       let routeMiddleware = Reflect.getMetadata('Middlewares', route.object, route.key) || [];
       routeMiddleware.forEach((middleware: Function) => {
-        router.use(route.path, middleware);
+        expresskitRouter.router.use(route.path, middleware);
       });
 
-      let expressMethod = this.getExpressMethod(router, route.method);
-      expressMethod.call(router, route.path, RequestHandlerService.requestHandlerFactory(route));
+      let expressMethod = this.getExpressMethod(expresskitRouter.router, route.method);
+      expressMethod.call(expresskitRouter.router, route.path, RequestHandlerService.requestHandlerFactory(route));
     });
 
     // Bind routers
     this.routers.forEach((router) => {
-      application.use(router.mount, router.expressRouter);
+      router.expresskitRouter.bindToApplication(server.expresskitRouter.router);
+      //server.use.apply(server, router.expresskitRouter.getBindableArguments());
     });
-     
+
+    // Bind default router
+    server.expresskitRouter.bindToApplication(server.application);
+    //server.application.use.apply(server.application, server.expresskitRouter.getBindableArguments());
   }
   
   /**
    * Given the static paths, uses express.static to bind static paths
    */
-  public static bindStaticPaths(server: any, application: any, staticPaths: IStaticUriPath[]) {
+  public static bindStaticPaths(server: ExpresskitServer, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((path) => {
-      application.use(path.uri, server.static(path.path));
+      server.use(path.uri, server.static(path.path));
     });
   }
   
   /**
    * Given the static paths, uses express.static to bind static paths
    */
-  public static bindStaticFiles(application: any, staticPaths: IStaticUriPath[]) {
+  public static bindStaticFiles(server: ExpresskitServer, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((p) => {
-      application.get(p.uri, (req: any, res: any) => {
+      server.get(p.uri, (req: any, res: any) => {
         res.sendFile(path.resolve(__dirname + '/' + p.path));
       });
     });

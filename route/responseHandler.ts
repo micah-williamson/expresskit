@@ -1,14 +1,15 @@
 import {Reflect} from '../reflect';
 
+import Expresskit from '../index';
 import {IRoute} from './manager';
 import {DTOManager} from '../dto/manager';
 import {Response} from './response';
 
 export class ResponseHandlerService {
 
-  public static handleResponse(route: IRoute, expressResponse: any, methodResponse: any) {
+  public static handleResponse(route: IRoute, expressResponse: any, methodResponse: any): any {
     if(methodResponse && methodResponse.then) {
-      methodResponse.then((payload: any) => {
+      return methodResponse.then((payload: any) => {
         let response = this.convertSuccessResponse(payload);
         this.sendResponse(route, response, expressResponse);
       }).catch((payload: any) => {
@@ -47,8 +48,8 @@ export class ResponseHandlerService {
     if(responseType) {
       DTOManager.scrubOut(response.data, responseType);
     }
-
-    expressResponse.status(response.httpCode).send(response.data);
+    
+    Expresskit.server.sendResponse(route, response, expressResponse);
   }
 
 }
