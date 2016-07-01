@@ -73,14 +73,14 @@ export class RouteManager {
    * Binds the routes to the given express application
    * @param {any} application [description]
    */
-  public static bindRoutes(application: any) {
+  public static bindRoutes(server: any, application: any) {
     // Initialize routers
     this.routers.forEach((router) => {
       let routerMiddleware = Reflect.getMetadata('Middlewares', router.object) || [];
       let expressRouter = router.expressRouter;
 
       if(!expressRouter) {
-        expressRouter = router.expressRouter = express.Router();
+        expressRouter = router.expressRouter = server.Router();
       }
 
       routerMiddleware.forEach((middleware: Function) => {
@@ -121,9 +121,9 @@ export class RouteManager {
   /**
    * Given the static paths, uses express.static to bind static paths
    */
-  public static bindStaticPaths(application: any, staticPaths: IStaticUriPath[]) {
+  public static bindStaticPaths(server: any, application: any, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((path) => {
-      application.use(path.uri, express.static(path.path));
+      application.use(path.uri, server.static(path.path));
     });
   }
   

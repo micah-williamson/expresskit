@@ -14,6 +14,7 @@ export interface IExpresskitConfig {
   timezone?: string;
   staticFiles?: IStaticUriPath[];
   staticPaths?: IStaticUriPath[];
+  server?: any;
 }
 
 function initDefaultExpresskitConfig(config: IExpresskitConfig) {
@@ -26,32 +27,54 @@ function initDefaultExpresskitConfig(config: IExpresskitConfig) {
 
 export default class Expresskit {
 
-  public static server = express();
+  public static server: any;
 
-  public static start(config?: IExpresskitConfig ) {
-    // TODO: es6 node does not support defaults in the arguments.
-    //       Once this becomes available use `= {}` as the default value
-    config = config || {}
-    
-    initDefaultExpresskitConfig(config);
-    
-    process.env.TZ = config.timezone;
-    
-    this.server.use(bodyParser.json({ type: 'application/json' }));
-    this.server.use(bodyParser.urlencoded({extended: true}));
-    this.server.use(bodyParser.text());
-    this.server.use(bodyParser.raw());
-    
-    if(config.compression) {
-      this.server.use(compression());
-    }
+  public static application: any;
 
-    RouteManager.bindStaticPaths(this.server, config.staticPaths);
-    RouteManager.bindStaticFiles(this.server, config.staticFiles);
-    RouteManager.bindRoutes(this.server);
+  public static applicationHandle: any;
 
-    this.server.listen(config.port, () => {
-      console.log(`Started server on port ${config.port}`);
+  /**
+   * Starts an application instance
+   */
+  public static start(config: IExpresskitConfig = {}): Promise<any> {
+    return new Promise((resolve, reject) => {
+      initDefaultExpresskitConfig(config);
+      
+      process.env.TZ = config.timezone;
+
+      if(config.server) {
+        this.server = config.server;
+        this.application = config.server();
+      } else {
+        this.server = express;
+        this.application = express();
+      }
+      
+      this.application.use(bodyParser.json({ type: 'application/json' }));
+      this.application.use(bodyParser.urlencoded({extended: true}));
+      this.application.use(bodyParser.text());
+      this.application.use(bodyParser.raw());
+      
+      if(config.compression) {
+        this.application.use(compression());
+      }
+
+      RouteManager.bindStaticPaths(this.server, this.application, config.staticPaths);
+      RouteManager.bindStaticFiles(this.application, config.staticFiles);
+      RouteManager.bindRoutes(this.server, this.application);
+
+      this.applicationHandle = this.application.listen(config.port, () => {
+        console.log(`Started server on port ${config.port}`);
+        resolve();
+      });
     });
+  }
+
+  /**
+   * Closes the application instance
+   */
+  public static stop() {
+    console.log('closed application');
+    this.applicationHandle.close();
   }
 }

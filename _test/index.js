@@ -1,5 +1,12 @@
-// server:
-require('./bld/_test/src/index.js');
+var Expresskit = require('./bld/index.js').default;
+
+require('./bld/_test/src/basic/router');
+require('./bld/_test/src/auth/router');
+require('./bld/_test/src/user/router');
+require('./bld/_test/src/rules/router');
+require('./bld/_test/src/middleware/router');
+
+Expresskit.start();
 
 // tests:
 require('./basicRouting.test.js');
