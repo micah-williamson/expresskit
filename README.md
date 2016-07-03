@@ -21,6 +21,8 @@ Developers using Java and C# frameworks are familiar with annotations when writi
 
 [Static Content](#staticcontent)
 
+[Koa](#koa)
+
 **Routing**
 
 [The Basics](route/README.md#thebasics)
@@ -247,6 +249,48 @@ http://localhost:8000/
 http://localhost:8000/index.html
 http://localhost:8000/images/fooimage.jpg
 ```
+
+<a name="koa"></a>
+## Koa
+
+This branch has experimental Koa support. It was written to handle `koa 1.2` and `koa-router 5.4`
+initially but switched at the last moment to `koa 2` and `koa-router 7`. With that said, the code is
+in a hackish state at the moment.
+
+Expresskit still comes installed with `express`. To use Koa you will need to install `koa` and
+`koa-router`.
+
+```
+npm install koa@2 --save
+npm install koa-router@7 --save
+```
+
+In the `index.ts` file, you can choose Koa by providing the `koa` and `koa-router` packages in
+the `start` method. 
+
+The default `express` configuration comes with body parser middlewares. By default, Koa does not.
+To add the body parser middleware include it in the `middleware` array in the start options.
+
+```
+declare var require: any;
+
+let koa = require('koa');
+let koaRouter = require('koa-router');
+let koaBodyParser = require('koa-bodyparser');
+
+import Expresskit from 'expresskit';
+import {KoaServer} from 'expresskit/server';
+
+Expresskit.start({
+  server: new KoaServer(koa, koaRouter),
+  middleware: [
+   koaBodyParser() 
+  ]
+});
+```
+
+Not a whole lot of testing has been done for Koa. But the unit tests pass- so that's a good
+sign.
 
 ## Keep Reading
 
