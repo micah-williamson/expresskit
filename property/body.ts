@@ -2,6 +2,7 @@ import {InjectorService} from '../injector/service';
 import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {Response} from '../route';
 import {DTOManager} from '../dto/manager';
+import {ExpresskitServer} from '../server';
 
 export function Body(dto?: Object) {
   return function(object: any, method: string, index: number) {
@@ -21,10 +22,10 @@ export function Body(dto?: Object) {
 
 export class BodyInjectionResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: any): Promise<any> {
+  public resolve(server: ExpresskitServer, injectable: IInjectable, request: any): Promise<any> {
     let dto = injectable.arguments[0];
 
-    let body = request.body;
+    let body = server.getBody(request);
 
     if(dto) {
       if(body) {

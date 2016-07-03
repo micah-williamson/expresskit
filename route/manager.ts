@@ -4,7 +4,6 @@ declare var __dirname: any;
 import {Reflect} from '../reflect';
 
 import {IStaticUriPath} from './static';
-import {RequestHandlerService} from './requestHandler';
 import {ExpresskitServer} from '../server';
 import {AuthManager} from '../auth/manager';
 import {ExpresskitRouter} from '../router';
@@ -17,7 +16,7 @@ export type RouteMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export interface IRouter {
   mount: string;
   object: any;
-  expresskitRouter: ExpresskitRouter;
+  router: ExpresskitRouter;
 }
 
 export interface IRoute {
@@ -39,7 +38,7 @@ export class RouteManager {
     this.routers.push({
       mount: mount,
       object: object,
-      expresskitRouter: null
+      router: null
     });
   }
 
@@ -78,14 +77,11 @@ export class RouteManager {
     // Initialize routers
     this.routers.forEach((router) => {
       let routerMiddleware = Reflect.getMetadata('Middlewares', router.object) || [];
-      let expresskitRouter = router.expresskitRouter;
-
-      if(!expresskitRouter) {
-        expresskitRouter = router.expresskitRouter = server.Router(router.mount);
-      }
+      
+      router.router = server.createRouter(router.mount);
 
       routerMiddleware.forEach((middleware: Function) => {
-        expresskitRouter.router.use(middleware);
+        router.router.use(middleware);
       });
     });
 
@@ -94,33 +90,31 @@ export class RouteManager {
       console.log(`[DEBUG] Bound route: ${route.method} > ${route.path} to ${route.object.prototype.constructor.name}.${route.key}.`);
 
       let routerBinding = this.getRouterByClass(route.object);
-      let expresskitRouter: any;
+      let router: any;
 
       if(routerBinding) {
-        expresskitRouter = routerBinding.expresskitRouter;
+        router = routerBinding.router;
       } else {
-        expresskitRouter = server.expresskitRouter;
+        router = server.router;
       }
 
       // Binding route middlewares
       let routeMiddleware = Reflect.getMetadata('Middlewares', route.object, route.key) || [];
       routeMiddleware.forEach((middleware: Function) => {
-        expresskitRouter.router.use(route.path, middleware);
+        router.use(route.path, middleware);
       });
 
-      let expressMethod = this.getExpressMethod(expresskitRouter.router, route.method);
-      expressMethod.call(expresskitRouter.router, route.path, RequestHandlerService.requestHandlerFactory(route));
+      let expressMethod = this.getExpressMethod(router, route.method);
+      expressMethod.call(router, route.path, server.getRequestHandler(route));
     });
 
     // Bind routers
     this.routers.forEach((router) => {
-      router.expresskitRouter.bindToApplication(server.expresskitRouter.router);
-      //server.use.apply(server, router.expresskitRouter.getBindableArguments());
+      router.router.bindSelf(server.router);
     });
-
-    // Bind default router
-    server.expresskitRouter.bindToApplication(server.application);
-    //server.application.use.apply(server.application, server.expresskitRouter.getBindableArguments());
+    
+    // Bind root router
+    server.router.bindSelf(server);
   }
   
   /**
@@ -128,7 +122,7 @@ export class RouteManager {
    */
   public static bindStaticPaths(server: ExpresskitServer, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((path) => {
-      server.use(path.uri, server.static(path.path));
+      server.use(path.uri, server.router.static(path.path));
     });
   }
   
@@ -137,7 +131,7 @@ export class RouteManager {
    */
   public static bindStaticFiles(server: ExpresskitServer, staticPaths: IStaticUriPath[]) {
     staticPaths.forEach((p) => {
-      server.get(p.uri, (req: any, res: any) => {
+      server.router.get(p.uri, (req: any, res: any) => {
         res.sendFile(path.resolve(__dirname + '/' + p.path));
       });
     });

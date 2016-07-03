@@ -7,23 +7,25 @@ export abstract class ExpresskitServer {
 
   public listenHandle: any;
 
-  public expresskitRouter: ExpresskitRouter;
+  public router: ExpresskitRouter;
 
-  public abstract Router (... args: any[]): ExpresskitRouter;
-
-  public abstract use (... args: any[]): any;
-
+  public abstract createRouter (... args: any[]): ExpresskitRouter;
+  
   public abstract listen (... args: any[]): any;
 
   public abstract stop(... args: any[]): any;
-
-  public abstract static(... args: any[]): any;
-
-  public abstract get (... args: any[]): any;
   
-  public abstract put (... args: any[]): any;
-
-  public abstract post (... args: any[]): any;
-
-  public abstract delete (... args: any[]): any;
+  public abstract use (... args: any[]): any;
+  
+  public abstract getHeader(request: any, name: string): string;
+  
+  public abstract getQuery(request: any, name: string): string;
+  
+  public abstract getParam(request: any, name: string): string;
+  
+  public abstract getBody(request: any): any;
+  
+  public abstract getRequestHandler(... args: any[]): Function;
+  
+  public abstract sendResponse(... args: any[]): any;
 }

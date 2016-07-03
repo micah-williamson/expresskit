@@ -1,3 +1,5 @@
+import {ExpresskitServer} from '../server';
+
 export class IInjectable {
   index: number;
   arguments: any[];
@@ -6,7 +8,7 @@ export class IInjectable {
 export type Injection = IInjectionConfig[];
 
 export interface IInjectionResolver {
-  resolve(injectable: IInjectable, context: any): Promise<any>;
+  resolve(server: ExpresskitServer, injectable: IInjectable, context: any): Promise<any>;
 }
 
 export class IInjectionConfig {

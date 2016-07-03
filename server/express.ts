@@ -1,6 +1,11 @@
+import {Reflect} from '../reflect';
+
 import {ExpresskitServer} from './server';
 import {ExpressRouter} from '../router';
-import {Response} from '../route';
+import {IRoute, Response, ResponseService} from '../route';
+import {RuleService} from '../rule/service';
+import {InjectorService} from '../injector/service';
+import {DTOManager} from '../dto';
 
 export class ExpressServer extends ExpresskitServer {
   constructor(express: any) {
@@ -8,17 +13,17 @@ export class ExpressServer extends ExpresskitServer {
 
     this.package = express;
     this.application = express();
-    this.expresskitRouter = this.Router('/');
+    this.router = this.createRouter('/');
   }
 
-  public Router(mount: string): ExpressRouter {
+  public createRouter(mount: string): ExpressRouter {
     let router = this.package.Router();
 
     return new ExpressRouter(mount, router);
   }
 
   public use(... args: any[]) {
-    return this.expresskitRouter.router.use.apply(this.expresskitRouter.router, args);
+    return this.application.use.apply(this.application, args);
   }
 
   public listen (... args: any[]) {
@@ -28,28 +33,49 @@ export class ExpressServer extends ExpresskitServer {
   public stop(... args: any[]) {
     return this.listenHandle.stop.apply(this.application, args);
   }
-
-  public static (... args: any[]) {
-    return this.expresskitRouter.router.static.apply(this.expresskitRouter.router, args);
-  }
-
-  public get (... args: any[]) {
-    return this.expresskitRouter.router.get.apply(this.expresskitRouter.router, args);
+  
+  public getHeader(request: any, name: string): string {
+    return request.header(name);
   }
   
-  public put (... args: any[]) {
-    return this.expresskitRouter.router.put.apply(this.expresskitRouter.router, args);
+  public getQuery(request: any, name: string): string {
+    return request.query[name];
   }
-
-  public post (... args: any[]) {
-    return this.expresskitRouter.router.post.apply(this.expresskitRouter.router, args);
+  
+  public getParam(request: any, name: string): string {
+    return request.params[name];
   }
-
-  public delete (... args: any[]) {
-    return this.expresskitRouter.router.delete.apply(this.expresskitRouter.router, args);
+  
+  public getBody(request: any): any {
+    return request.body;
   }
+  
+  public getRequestHandler(route: IRoute): Function {
+    return (ctx: any, expressResponse: any) => {
+      let rules = Reflect.getMetadata('Rules', route.object, route.key) || [];
 
-  public sendResponse(route: any, response: Response, expressResponse: any) {
+      return RuleService.runRules(this, rules, ctx).then(() => {
+        return InjectorService.run(this, route.object, route.key, ctx).then((response: Response) => {
+          return this.sendResponse(route, expressResponse, ResponseService.convertSuccessResponse(response));
+        }).catch((response: Response) => {
+          return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
+        });
+      }).catch((response: Response) => {
+        return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
+      });
+      
+    }
+  }
+  
+  public sendResponse(route: IRoute, expressResponse: any, response: Response) {
+    let object = route.object;
+    let key = route.key;
+
+    let responseType = Reflect.getMetadata('ResponseType', object, key);
+    if(responseType) {
+      DTOManager.scrubOut(response.data, responseType);
+    }
+    
     expressResponse.status(response.httpCode).send(response.data);
   }
 }

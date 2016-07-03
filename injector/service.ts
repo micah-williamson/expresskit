@@ -1,5 +1,6 @@
 import {Reflect} from '../reflect';
 import {Response, ResponseType} from '../route/response';
+import {ExpresskitServer} from '../server';
 
 import {Injection, IInjectable, IInjectionConfig, IInjectionResolver} from './';
 
@@ -13,11 +14,11 @@ export class InjectorService {
     Reflect.defineMetadata('Injection', injection, object, method);
   }
 
-  public static run(object: any, method: any, context: any): Promise<Response> {
+  public static run(server: ExpresskitServer, object: any, method: any, context: any): Promise<Response> {
     return new Promise((resolve, reject) => {
       let injection = <Injection>Reflect.getMetadata('Injection', object, method) || [];
 
-      this.resolveInjection(injection, context).then((response: Response) => {
+      this.resolveInjection(server, injection, context).then((response: Response) => {
         if(response.type === ResponseType.Success) {
           let methodResult = object[method].apply(object, response.data);
           resolve(methodResult);
@@ -30,11 +31,11 @@ export class InjectorService {
     });
   }
 
-  public static resolveInjection(injection: Injection, context: any): Promise<any> {
+  public static resolveInjection(server: ExpresskitServer, injection: Injection, context: any): Promise<any> {
     let returnPromises: Promise<any>[] = [];
 
     injection.forEach((injectionConfig) => {
-      returnPromises[injectionConfig.injectable.index] = injectionConfig.injectionResolver.resolve(injectionConfig.injectable, context)
+      returnPromises[injectionConfig.injectable.index] = injectionConfig.injectionResolver.resolve(server, injectionConfig.injectable, context)
     });
 
     return Promise.all(returnPromises).then((values: any[]) => {

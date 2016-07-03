@@ -2,6 +2,7 @@ import {fatal} from '../error';
 import {Response} from '../route/response';
 import {IRoute} from '../route/manager';
 import {InjectorService} from '../injector/service';
+import {ExpresskitServer} from '../server';
 
 export class IRuleHandler {
   public name: string;
@@ -53,11 +54,11 @@ export class RuleService {
   /**
    * Runs a rule tree
    */
-  public static runRules(ruleTree: IRuleResolverTree, context: any): Promise<any> {
+  public static runRules(server: ExpresskitServer, ruleTree: IRuleResolverTree, context: any): Promise<any> {
     let promises: Promise<Promise<any>>[] = [];
 
     ruleTree.forEach((ruleBranch: IRuleResolverBranch) => {
-      promises.push(this.runRuleBranch(ruleBranch, context));
+      promises.push(this.runRuleBranch(server, ruleBranch, context));
     });
 
     // Rule tree is an AND operation. All must pass to succeed
@@ -67,7 +68,7 @@ export class RuleService {
   /**
    * Runs a rule branch
    */
-  private static runRuleBranch(ruleBranch: IRuleResolverBranch, context: any): Promise<any> {
+  private static runRuleBranch(server: ExpresskitServer, ruleBranch: IRuleResolverBranch, context: any): Promise<any> {
     return new Promise((resolve, reject) => {
       let promises: Promise<any>[] = [];
       let running = 0;
@@ -77,7 +78,7 @@ export class RuleService {
 
         let promise = new Promise((branchResolve, branchReject) => {
           // Rule branches are OR operations. One pass succeeds
-          InjectorService.run(handler.object, handler.method, context).then((response: any) => {
+          InjectorService.run(server, handler.object, handler.method, context).then((response: any) => {
             if(response instanceof Response && (<Response>response).httpCode >= 400) {
               branchReject(response);
             } else {

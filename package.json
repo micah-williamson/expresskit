@@ -21,8 +21,9 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^3.5.0",
-    "koa": "^1.2.0",
-    "koa-router": "^5.4.0",
+    "koa": "^2.0.0",
+    "koa-bodyparser": "^2.2.0",
+    "koa-router": "^7.0.1",
     "request": "^2.72.0"
   },
   "dependencies": {

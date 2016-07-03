@@ -3,6 +3,7 @@ import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {Response, ResponseType} from '../route/response';
 import {IAuthHandler, AuthManager} from './manager';
 import {fatal} from '../error';
+import {ExpresskitServer} from '../server';
 
 export function Auth(name?: string) {
   return function(object: any, method: string, index: number) {
@@ -22,7 +23,7 @@ export function Auth(name?: string) {
 
 export class AuthenticationInjectionResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: any): Promise<any> {
+  public resolve(server: ExpresskitServer, injectable: IInjectable, request: any): Promise<any> {
     return new Promise((resolve, reject) => { 
       let name = injectable.arguments[0];
       let authResource: IAuthHandler;
@@ -33,7 +34,7 @@ export class AuthenticationInjectionResolver implements IInjectionResolver {
         authResource = AuthManager.getDefault();
       }
 
-      InjectorService.run(authResource.object, authResource.method, request).then((response: any) => {
+      InjectorService.run(server, authResource.object, authResource.method, request).then((response: any) => {
           if(response.type === ResponseType.Error) {
             reject(response);
           } else {

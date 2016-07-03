@@ -1,6 +1,7 @@
 import {InjectorService} from '../injector/service';
 import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {OptionalResolver} from './optional';
+import {ExpresskitServer} from '../server';
 
 export function Context() {
   return function(object: any, method: string, index: number) {
@@ -20,7 +21,7 @@ export function Context() {
 
 export class ContextInjectionResolver extends OptionalResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: any): Promise<any> {
+  public resolve(server: ExpresskitServer, injectable: IInjectable, request: any): Promise<any> {
     return Promise.resolve(request);
   }
   

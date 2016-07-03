@@ -1,6 +1,7 @@
 import {InjectorService} from '../injector/service';
 import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
 import {OptionalResolver} from './optional';
+import {ExpresskitServer} from '../server';
 
 export function Header(name: string) {
   return function(object: any, method: string, index: number) {
@@ -20,10 +21,10 @@ export function Header(name: string) {
 
 export class HeaderInjectionResolver extends OptionalResolver implements IInjectionResolver {
 
-  public resolve(injectable: IInjectable, request: any): Promise<any> {
+  public resolve(server: ExpresskitServer, injectable: IInjectable, request: any): Promise<any> {
     let paramName = injectable.arguments[0];
     let optionalParts = this.getOptionalParts(paramName);
-    let val = request.header(optionalParts.name);
+    let val = server.getHeader(request, optionalParts.name);
 
     return this.optionallyResolve(optionalParts, val, 'header');
   }

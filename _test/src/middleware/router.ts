@@ -1,40 +1,44 @@
-import {Request as ExpressRequest} from 'express';
-
 import {Router, Route} from '../../../route';
 import {Param, Header, Body} from '../../../property';
 import {Auth, AuthHandler} from '../../../auth';
 import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../dto';
 import {RouterMiddleware, RouteMiddleware} from '../../../middleware';
 
-export class MiddlewareService {
-  public static routerMiddleware(req: ExpressRequest, res: any, next: any) {
-    req.body = {
-      pass: 'router'
-    };
+let middlewareValue = '';
 
-    next();
+export class MiddlewareService {
+  public static routerMiddleware(ctx: any, koaNext: any, expressNext: any) {
+    middlewareValue = 'router';
+
+    if(expressNext) {
+      expressNext();
+    } else if(koaNext) {
+      return koaNext();
+    }
   }
 
-  public static routeMiddleware(req: ExpressRequest, res: any, next: any) {
-    req.body = {
-      pass: 'route'
-    };
+  public static routeMiddleware(ctx: any, koaNext: any, expressNext: any) {
+    middlewareValue = 'route';
 
-    next();
+    if(expressNext) {
+      expressNext();
+    } else if(koaNext) {
+      return koaNext();
+    }
   }
 }
 
 @Router('/middleware')
 @RouterMiddleware(MiddlewareService.routerMiddleware)
 export class MiddlewareRouter {
-    @Route('GET', '/router/:pass')
-    public static routerMiddleware(@Body() body: any) {
-      return body.pass;
+    @Route('GET', '/router')
+    public static routerMiddleware() {
+      return middlewareValue;
     }
 
-    @Route('GET', '/route/:pass')
+    @Route('GET', '/route')
     @RouteMiddleware(MiddlewareService.routeMiddleware)
-    public static routeMiddleware(@Body() body: any) {
-      return body.pass;
+    public static routeMiddleware() {
+      return middlewareValue;
     }
 }
