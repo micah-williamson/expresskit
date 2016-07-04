@@ -1,8 +1,7 @@
-import {InjectorService} from '../injector/service';
-import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
+import {InjectorService, IInjectable, IInjectionConfig, IInjectionResolver} from 'restkit/injector';
 import {OptionalResolver} from './optional';
 
-export function Header(name: string) {
+export function Param(name: string) {
   return function(object: any, method: string, index: number) {
     let injectable: IInjectable = {
       index: index,
@@ -10,7 +9,7 @@ export function Header(name: string) {
     };
 
     let injectionConfig: IInjectionConfig = {
-      injectionResolver: new HeaderInjectionResolver(),
+      injectionResolver: new ParamInjectionResolver(),
       injectable: injectable
     };
 
@@ -18,14 +17,14 @@ export function Header(name: string) {
   }
 }
 
-export class HeaderInjectionResolver extends OptionalResolver implements IInjectionResolver {
+export class ParamInjectionResolver extends OptionalResolver implements IInjectionResolver {
 
   public resolve(injectable: IInjectable, request: any): Promise<any> {
     let paramName = injectable.arguments[0];
     let optionalParts = this.getOptionalParts(paramName);
-    let val = request.header(optionalParts.name);
+    let val = request.params[optionalParts.name];
 
-    return this.optionallyResolve(optionalParts, val, 'header');
+    return this.optionallyResolve(optionalParts, val, 'parameter');
   }
   
 }

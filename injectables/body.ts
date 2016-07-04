@@ -1,7 +1,6 @@
-import {InjectorService} from '../injector/service';
-import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
-import {Response} from '../route';
-import {DTOManager} from '../dto/manager';
+import {InjectorService, IInjectable, IInjectionConfig, IInjectionResolver} from 'restkit/injector';
+import {Response} from 'restkit/route';
+import {DTOManager} from 'restkit/dto';
 
 export function Body(dto?: Object) {
   return function(object: any, method: string, index: number) {

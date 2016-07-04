@@ -1,7 +1,7 @@
-import {Route} from '../../../route';
-import {Param, Header, Body} from '../../../property';
-import {Auth, AuthHandler} from '../../../auth';
-import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../dto';
+import {Route} from '../../../index';
+import {Auth, AuthHandler} from '../../../index';
+import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../index';
+import {Param, Header, Body} from '../../../index';
 
 export class User {
     @Validate({

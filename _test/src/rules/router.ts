@@ -1,7 +1,8 @@
-import {Route, Response} from '../../../route';
-import {Rule, RuleHandler} from '../../../rule';
-import {Param, Header, Query, Body} from '../../../property';
-import {Auth} from '../../../auth';
+import {Route, Response} from '../../../index';
+import {Rule, RuleHandler} from '../../../index';
+import {Auth} from '../../../index';
+
+import {Param, Header, Query, Body} from '../../../injectables';
 
 export class RuleService {
   @RuleHandler('FailRule')

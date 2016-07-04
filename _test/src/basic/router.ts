@@ -1,5 +1,6 @@
-import {Route, Response} from '../../../route';
-import {Param, Query, Body, Context} from '../../../property';
+import {Route, Response} from '../../../index';
+import {Context} from '../../../index';
+import {Param, Query, Body} from '../../../index';
 
 export class UserRouter {
     @Route('GET', '/basic')
