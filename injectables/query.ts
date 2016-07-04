@@ -1,7 +1,5 @@
-import {InjectorService} from '../injector/service';
-import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
+import {InjectorService, IInjectable, IInjectionConfig, IInjectionResolver} from 'restkit/injector';
 import {OptionalResolver} from './optional';
-import {ExpresskitServer} from '../server';
 
 export function Query(name: string) {
   return function(object: any, method: string, index: number) {
@@ -21,10 +19,10 @@ export function Query(name: string) {
 
 export class QueryInjectionResolver extends OptionalResolver implements IInjectionResolver {
 
-  public resolve(server: ExpresskitServer, injectable: IInjectable, request: any): Promise<any> {
+  public resolve(injectable: IInjectable, request: any): Promise<any> {
     let paramName = injectable.arguments[0];
     let optionalParts = this.getOptionalParts(paramName);
-    let val = server.getQuery(request, optionalParts.name);
+    let val = request.query[optionalParts.name];
 
     return this.optionallyResolve(optionalParts, val, 'query parameter');
   }

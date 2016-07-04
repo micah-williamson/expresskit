@@ -1,8 +1,6 @@
-import {InjectorService} from '../injector/service';
-import {IInjectable, IInjectionConfig, IInjectionResolver} from '../injector';
-import {Response} from '../route';
-import {DTOManager} from '../dto/manager';
-import {ExpresskitServer} from '../server';
+import {InjectorService, IInjectable, IInjectionConfig, IInjectionResolver} from 'restkit/injector';
+import {Response} from 'restkit/route';
+import {DTOManager} from 'restkit/dto';
 
 export function Body(dto?: Object) {
   return function(object: any, method: string, index: number) {
@@ -22,10 +20,10 @@ export function Body(dto?: Object) {
 
 export class BodyInjectionResolver implements IInjectionResolver {
 
-  public resolve(server: ExpresskitServer, injectable: IInjectable, request: any): Promise<any> {
+  public resolve(injectable: IInjectable, request: any): Promise<any> {
     let dto = injectable.arguments[0];
 
-    let body = server.getBody(request);
+    let body = request.body;
 
     if(dto) {
       if(body) {

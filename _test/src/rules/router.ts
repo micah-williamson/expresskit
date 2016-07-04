@@ -1,7 +1,8 @@
-import {Route, Response} from '../../../route';
-import {Rule, RuleHandler} from '../../../rule';
-import {Param, Header, Query, Body} from '../../../property';
-import {Auth} from '../../../auth';
+import {Route, Response} from 'restkit/route';
+import {Rule, RuleHandler} from 'restkit/rule';
+import {Auth} from 'restkit/auth';
+
+import {Param, Header, Query, Body} from '../../../injectables';
 
 export class RuleService {
   @RuleHandler('FailRule')

@@ -1,8 +1,20 @@
-import Expresskit from '../../index';
-import './basic/router';
-import './auth/router';
-import './user/router';
-import './rules/router';
-import './middleware/router';
+declare var require: any;
 
-Expresskit.start();
+import {Restkit} from 'restkit';
+
+import {ExpressServer} from '../../index';
+
+let bodyParser = require('body-parser');
+
+import './auth/router';
+import './basic/router';
+import './middleware/router';
+import './rules/router';
+import './user/router';
+
+Restkit.start({
+  server: new ExpressServer(),
+  middleware: [
+    bodyParser.json()
+  ]
+});

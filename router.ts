@@ -1,6 +1,6 @@
-import {ExpresskitRouter} from './router';
+import {RestkitRouter} from 'restkit/router';
 
-export class ExpressRouter extends ExpresskitRouter {
+export class ExpressRouter extends RestkitRouter {
   public bindSelf(parent: any) {
     parent.use(this.mount, this.router);
   }

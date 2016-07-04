@@ -1,6 +1,6 @@
-import {Route, Response} from '../../../route';
-import {Param, Header, Body} from '../../../property';
-import {Auth, AuthHandler} from '../../../auth';
+import {Route, Response} from 'restkit/route';
+import {Param, Header, Body} from '../../../injectables';
+import {Auth, AuthHandler} from 'restkit/auth';
 
 export class AuthService {
     @AuthHandler('Foo', true)

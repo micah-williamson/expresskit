@@ -1,22 +1,27 @@
-import {Reflect} from '../reflect';
+declare var require: any;
 
-import {ExpresskitServer} from './server';
-import {ExpressRouter} from '../router';
-import {IRoute, Response, ResponseService} from '../route';
-import {RuleService} from '../rule/service';
-import {InjectorService} from '../injector/service';
-import {DTOManager} from '../dto';
+let express = require('express');
 
-export class ExpressServer extends ExpresskitServer {
-  constructor(express: any) {
+import {Reflect} from 'restkit/reflect';
+import {RestkitServer} from 'restkit/server';
+import {RestkitRouter} from 'restkit/router';
+import {IRoute, Response, ResponseService} from 'restkit/route';
+import {RuleService} from 'restkit/rule';
+import {InjectorService} from 'restkit/injector';
+import {DTOManager} from 'restkit/dto';
+
+import {ExpressRouter} from './router';
+
+export class ExpressServer extends RestkitServer {
+  constructor() {
     super();
 
     this.package = express;
     this.application = express();
-    this.router = this.createRouter('/');
+    this.baseRouter = this.createRouter('/');
   }
 
-  public createRouter(mount: string): ExpressRouter {
+  public createRouter(mount: string): RestkitRouter {
     let router = this.package.Router();
 
     return new ExpressRouter(mount, router);
@@ -34,28 +39,12 @@ export class ExpressServer extends ExpresskitServer {
     return this.listenHandle.stop.apply(this.application, args);
   }
   
-  public getHeader(request: any, name: string): string {
-    return request.header(name);
-  }
-  
-  public getQuery(request: any, name: string): string {
-    return request.query[name];
-  }
-  
-  public getParam(request: any, name: string): string {
-    return request.params[name];
-  }
-  
-  public getBody(request: any): any {
-    return request.body;
-  }
-  
   public getRequestHandler(route: IRoute): Function {
     return (ctx: any, expressResponse: any) => {
       let rules = Reflect.getMetadata('Rules', route.object, route.key) || [];
 
-      return RuleService.runRules(this, rules, ctx).then(() => {
-        return InjectorService.run(this, route.object, route.key, ctx).then((response: Response) => {
+      return RuleService.runRules(rules, ctx).then(() => {
+        return InjectorService.run(route.object, route.key, ctx).then((response: Response) => {
           return this.sendResponse(route, expressResponse, ResponseService.convertSuccessResponse(response));
         }).catch((response: Response) => {
           return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
@@ -63,7 +52,6 @@ export class ExpressServer extends ExpresskitServer {
       }).catch((response: Response) => {
         return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
       });
-      
     }
   }
   

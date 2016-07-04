@@ -1,4 +1,4 @@
-import {Response} from '../route';
+import {Response} from 'restkit/route';
 
 export interface IOptionalParts {
   name: string;
