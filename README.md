@@ -1,15 +1,7 @@
 Expresskit
 ==========
 
-Express injectables for Restkit.
-
-**@Param()**
-
-**@Query()**
-
-**@Header()**
-
-**@Body()**
+Express support for [Restkit](https://github.com/iamchairs/restkit).
 
 ## Install
 
