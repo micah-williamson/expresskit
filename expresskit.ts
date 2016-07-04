@@ -12,7 +12,7 @@ export interface IExpresskitConfig {
 }
 
 export class Expresskit {
-  public static start(config: IExpresskitConfig) {
+  public static start(config?: IExpresskitConfig) {
     config.server = config.server || new ExpressServer();
     Restkit.start(<any>config);
   }
