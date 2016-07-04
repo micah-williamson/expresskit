@@ -1,7 +1,7 @@
 {
   "name": "expresskit",
-  "version": "0.5.0",
-  "description": "Koa support for Restkit",
+  "version": "0.6.0",
+  "description": "Express support for Restkit",
   "main": "bld/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -26,7 +26,8 @@
     "request": "^2.72.0"
   },
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "restkit": "^0.6.0"
   },
   "repository": {
     "type": "git",

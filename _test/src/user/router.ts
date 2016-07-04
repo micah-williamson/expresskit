@@ -1,8 +1,7 @@
-import {Route} from 'restkit/route';
-import {Auth, AuthHandler} from 'restkit/auth';
-import {ScrubOut, ScrubIn, Validate, ResponseType} from 'restkit/dto';
-
-import {Param, Header, Body} from '../../../injectables';
+import {Route} from '../../../index';
+import {Auth, AuthHandler} from '../../../index';
+import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../index';
+import {Param, Header, Body} from '../../../index';
 
 export class User {
     @Validate({

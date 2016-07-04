@@ -1,9 +1,8 @@
-import {Router, Route} from 'restkit/route';
-import {Auth, AuthHandler} from 'restkit/auth';
-import {ScrubOut, ScrubIn, Validate, ResponseType} from 'restkit/dto';
-import {RouterMiddleware, RouteMiddleware} from 'restkit/middleware';
-
-import {Param, Header, Body} from '../../../injectables';
+import {Router, Route} from '../../../index';
+import {Auth, AuthHandler} from '../../../index';
+import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../index';
+import {RouterMiddleware, RouteMiddleware} from '../../../index';
+import {Param, Header, Body} from '../../../index';
 
 let middlewareValue = '';
 

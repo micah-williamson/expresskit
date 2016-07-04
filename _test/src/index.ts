@@ -1,8 +1,6 @@
 declare var require: any;
 
-import {Restkit} from 'restkit';
-
-import {ExpressServer} from '../../index';
+import {Expresskit} from '../../index';
 
 let bodyParser = require('body-parser');
 
@@ -12,8 +10,7 @@ import './middleware/router';
 import './rules/router';
 import './user/router';
 
-Restkit.start({
-  server: new ExpressServer(),
+Expresskit.start({
   middleware: [
     bodyParser.json()
   ]

@@ -1,32 +1,25 @@
-Expresskit
-==========
+[<img src="https://s32.postimg.org/4yopf47n9/restkitexpress.png" height="100"/>](https://github.com/iamchairs/expresskit)
 
-Express support for [Restkit](https://github.com/iamchairs/restkit).
+Express support for [Restkit](https://github.com/iamchairs/restkit). 
 
 ## Install
 
 ```
-npm install restkit --save
 npm install expresskit --save
 ```
 
-## Start
+## Start 
 
 ```typescript
-import {Restkit} from 'restkit';
 import {Expresskit} from 'expresskit';
 
-Restkit.start({
-  package: Expresskit
-});
+Expresskit.start();
 ```
 
 ## Use
 
 ```typescript
-import {Route} from 'restkit';
-
-import {Param, Query, Header, Body} from 'expresskit';
+import {Route, Param, Query, Header, Body} from 'expresskit';
 
 export class UserRouter {
   @Route('PUT', '/user/:id')

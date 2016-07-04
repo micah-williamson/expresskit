@@ -1,6 +1,6 @@
-import {Route, Response} from 'restkit/route';
-import {Context} from 'restkit/injectables';
-import {Param, Query, Body} from '../../../injectables';
+import {Route, Response} from '../../../index';
+import {Context} from '../../../index';
+import {Param, Query, Body} from '../../../index';
 
 export class UserRouter {
     @Route('GET', '/basic')
