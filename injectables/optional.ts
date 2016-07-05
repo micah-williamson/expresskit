@@ -1,4 +1,4 @@
-import {Response} from 'restkit/route';
+import {Response} from 'restkit/response';
 
 export interface IOptionalParts {
   name: string;
@@ -39,7 +39,7 @@ export class OptionalResolver {
       } else if(optionalParts.default !== undefined) {
         return Promise.resolve(optionalParts.default);
       } else {
-        return Promise.reject(new Response(400, `Required ${type} missing: ${optionalParts.name}`));
+        return Promise.reject(Response.BadRequest(`Required ${type} missing: ${optionalParts.name}`));
       }
     }
   }

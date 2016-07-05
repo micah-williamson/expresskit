@@ -1,6 +1,6 @@
 import {Route, Response} from '../../../index';
 import {Rule, RuleHandler} from '../../../index';
-import {Auth} from '../../../index';
+import {Resource} from '../../../index';
 
 import {Param, Header, Query, Body} from '../../../injectables';
 
@@ -26,7 +26,7 @@ export class RuleService {
   }
 
   @RuleHandler('ComplexRule')
-  public static complexRule(@Auth() auth: string, @Param('a') a: string, @Query('b') b: string, @Header('c') c: string, @Body() d: any): Promise<any> {
+  public static complexRule(@Resource('Foo') auth: string, @Param('a') a: string, @Query('b') b: string, @Header('c') c: string, @Body() d: any): Promise<any> {
     return Promise.reject(auth + '' + a + '' + b + '' + c + '' + d.d);
   }
   

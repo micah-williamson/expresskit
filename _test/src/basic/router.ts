@@ -1,6 +1,7 @@
 import {Route, Response} from '../../../index';
 import {Context} from '../../../index';
 import {Param, Query, Body} from '../../../index';
+import {GET, PUT, PATCH, POST, DELETE} from '../../../index';
 
 export class UserRouter {
     @Route('GET', '/basic')
@@ -42,6 +43,11 @@ export class UserRouter {
         throw new Error('foo');
     }
 
+    @Route('GET', '/basic/errorthrownwithresponse')
+    public static errorThrownWithResponse() {
+        throw Response.BadRequest();
+    }
+
     @Route('GET', '/basic/rejectedpromise')
     public static rejectedPromise() {
         return Promise.reject('foo');
@@ -49,7 +55,8 @@ export class UserRouter {
 
     @Route('GET', '/basic/rejectedpromisewithresponse')
     public static rejectedPromiseWithResponse() {
-        return Promise.reject(new Response(405, 'foo'));
+        Response.O
+        return Promise.reject(Response.MethodNotAllowed('foo'));
     }
 
     @Route('GET', '/basic/resolvedpromise')
@@ -86,9 +93,15 @@ export class UserRouter {
     public static putNoResponse() {}
 
     @Route('PUT', '/basic/payload')
+    @Route('PATCH', '/basic/payload')
     @Route('POST', '/basic/payload')
     public static putPayload(@Body() payload: any) {
         return payload;
+    }
+
+    @Route('PATCH', '/basic')
+    public static basicPatch() {
+        return 'patch';
     }
     
     @Route('POST', '/basic')
@@ -99,5 +112,30 @@ export class UserRouter {
     @Route('DELETE', '/basic')
     public static basicDelete() {
         return 'delete';
+    }
+
+    @GET('/alias')
+    public static getAlias() {
+        return 'getalias';
+    }
+
+    @PUT('/alias')
+    public static putAlias() {
+        return 'putalias';
+    }
+
+    @POST('/alias')
+    public static postAlias() {
+        return 'postalias';
+    }
+
+    @PATCH('/alias')
+    public static patchAlias() {
+        return 'patchalias';
+    }
+
+    @DELETE('/alias')
+    public static deleteAlias() {
+        return 'deletealias';
     }
 }

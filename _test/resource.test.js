@@ -1,7 +1,7 @@
 let request = require('request');
 let assert = require('chai').assert;
 
-describe('Auth', () => {
+describe('Resource', () => {
 
     it('should resolve foo authentication', (done) => {
 
@@ -50,7 +50,7 @@ describe('Auth', () => {
         }, (err, response, body) => {
             assert.equal(err, null);
             assert.equal(body, 'foo');
-            assert.equal(response.statusCode, 401);
+            assert.equal(response.statusCode, 500);
 
             done();
         });
