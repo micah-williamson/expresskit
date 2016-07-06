@@ -45,13 +45,11 @@ export class ExpressServer extends RestkitServer {
       let rules = Reflect.getMetadata('Rules', route.object, route.key) || [];
 
       return RuleService.runRules(rules, ctx).then(() => {
-        return InjectorService.run(route.object, route.key, ctx).then((response: Response) => {
-          return this.sendResponse(route, expressResponse, ResponseService.convertSuccessResponse(response));
-        }).catch((response: Response) => {
-          return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
-        });
+        return InjectorService.run(route.object, route.key, ctx);
+      }).then((response: Response) => {
+        return this.sendResponse(route, expressResponse, response);
       }).catch((response: Response) => {
-        return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
+        return this.sendResponse(route, expressResponse, response);
       });
     }
   }

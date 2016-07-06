@@ -1,4 +1,5 @@
 import {Route, Response} from '../../../index';
+import {ResponseCode, ErrorCode} from '../../../index';
 import {Context} from '../../../index';
 import {Param, Query, Body} from '../../../index';
 import {GET, PUT, PATCH, POST, DELETE} from '../../../index';
@@ -55,7 +56,6 @@ export class UserRouter {
 
     @Route('GET', '/basic/rejectedpromisewithresponse')
     public static rejectedPromiseWithResponse() {
-        Response.O
         return Promise.reject(Response.MethodNotAllowed('foo'));
     }
 
@@ -82,6 +82,18 @@ export class UserRouter {
     @Route('GET', '/basic/defaultquery')
     public static getWithDefaultQuery(@Query('q=def') q: string) {
         return q;
+    }
+
+    @Route('GET', '/basic/defaulterrorcode')
+    @ErrorCode(505)
+    public static getWithDefaultErrorCode(): Promise<any> {
+        return Promise.reject('foo');
+    }
+
+    @Route('GET', '/basic/defaultresponsecode')
+    @ResponseCode(205)
+    public static getWithDefaultResponseCode() {
+        return 'foo';
     }
     
     @Route('PUT', '/basic')
