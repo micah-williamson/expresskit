@@ -1,14 +1,14 @@
-import {Route, Response} from '../../../index';
+import {Route, Router, Response} from '../../../index';
 import {Param, Header, Body} from '../../../index';
-import {Auth, AuthHandler} from '../../../index';
+import {Resolver, Resource} from '../../../index';
 
-export class AuthService {
-    @AuthHandler('Foo', true)
+export class ResourceService {
+    @Resolver('Foo')
     public static fooAuth() {
         return 'fooauth';
     }
 
-    @AuthHandler('Bar')
+    @Resolver('Bar')
     public static barAuth(@Header('Authorization') auth: string): any {
         if(auth === 'barauth-throwerror') {
             throw new Error();
@@ -22,16 +22,27 @@ export class AuthService {
         
         return auth;
     }
+
+    @Resolver('ResponseObject')
+    public static responseObject(): Response {
+        return Response.Ok('foo');
+    }
 }
 
-export class AuthRouter {
-    @Route('GET', '/auth/foo')
-    public static getWidgetA(@Auth() auth: string) {
+@Router('/resource')
+export class ResourceRouter {
+    @Route('GET', '/foo')
+    public static getWidgetA(@Resource('Foo') auth: string) {
         return auth;
     }
     
-    @Route('GET', '/auth/bar')
-    public static getWidgetB(@Auth('Bar') auth: string) {
+    @Route('GET', '/bar')
+    public static getWidgetB(@Resource('Bar') auth: string) {
         return auth;
+    }
+
+    @Route('GET', '/responseObject')
+    public static responseObject(@Resource('ResponseObject') res: string) {
+        return res;
     }
 }

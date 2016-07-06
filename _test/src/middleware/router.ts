@@ -1,5 +1,4 @@
 import {Router, Route} from '../../../index';
-import {Auth, AuthHandler} from '../../../index';
 import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../index';
 import {RouterMiddleware, RouteMiddleware} from '../../../index';
 import {Param, Header, Body} from '../../../index';

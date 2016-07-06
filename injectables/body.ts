@@ -1,5 +1,5 @@
 import {InjectorService, IInjectable, IInjectionConfig, IInjectionResolver} from 'restkit/injector';
-import {Response} from 'restkit/route';
+import {Response} from 'restkit/response';
 import {DTOManager} from 'restkit/dto';
 
 export function Body(dto?: Object) {
@@ -31,10 +31,10 @@ export class BodyInjectionResolver implements IInjectionResolver {
         let err = DTOManager.validate(body, dto);
         
         if(err) {
-          return Promise.reject(new Response(400, err));
+          return Promise.reject(Response.BadRequest(err));
         }
       } else {
-        return Promise.reject(new Response(400, 'Body expected')); 
+        return Promise.reject(Response.BadRequest('Body Expected')); 
       }
     }
     

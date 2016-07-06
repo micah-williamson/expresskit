@@ -1,5 +1,5 @@
 import {Route} from '../../../index';
-import {Auth, AuthHandler} from '../../../index';
+import {Resource, Resolver} from '../../../index';
 import {ScrubOut, ScrubIn, Validate, ResponseType} from '../../../index';
 import {Param, Header, Body} from '../../../index';
 
@@ -71,7 +71,7 @@ export class User {
 }
 
 export class UserService {
-    @AuthHandler('User')
+    @Resolver('User')
     public static resolveAuth(@Header('Authorization') auth: string): User {
         let user = new User();
         
@@ -86,7 +86,7 @@ export class UserService {
 export class UserRouter {
     @Route('PUT', '/user')
     @ResponseType(User)
-    public static updateUser(@Auth('User') user: User, @Body(User) update: User) {
+    public static updateUser(@Resource('User') user: User, @Body(User) update: User) {
         return update;
     }
 }

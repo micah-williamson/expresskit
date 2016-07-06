@@ -1,5 +1,3 @@
-require('./bld/route/response.js');
-
 let request = require('request');
 let assert = require('chai').assert;
 
@@ -11,6 +9,15 @@ describe('Basic Routing', () => {
             request('http://localhost:8000/basic', (err, response, body) => {
                 assert.equal(err, null);
                 assert.equal(body, 'get');
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
+        it('should accept the aliased @GET', (done) => {
+            request('http://localhost:8000/alias', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'getalias');
                 assert.equal(response.statusCode, 200);
                 done();
             });
@@ -87,6 +94,15 @@ describe('Basic Routing', () => {
             });
         });
 
+        it('should handle an error thrown with a response', (done) => {
+            request('http://localhost:8000/basic/errorthrownwithresponse', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(response.statusCode, 400);
+                assert.equal(body, 'Bad Request');
+                done();
+            });
+        });
+
         it('should handle a resolved promise', (done) => {
             request('http://localhost:8000/basic/resolvedpromise', (err, response, body) => {
                 assert.equal(err, null);
@@ -150,6 +166,24 @@ describe('Basic Routing', () => {
             });
         });
 
+        it('should use the default response code', (done) => {
+            request('http://localhost:8000/basic/defaultresponsecode', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 201);
+                done();
+            });
+        });
+
+        it('should use the default errpr code', (done) => {
+            request('http://localhost:8000/basic/defaulterrorcode', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'foo');
+                assert.equal(response.statusCode, 505);
+                done();
+            });
+        });
+
     });
 
     describe('PUT', () => {
@@ -158,6 +192,15 @@ describe('Basic Routing', () => {
             request.put('http://localhost:8000/basic', {}, (err, response, body) => {
                 assert.equal(err, null);
                 assert.equal(body, 'put');
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
+        it('should accept the aliased @PUT', (done) => {
+            request.put('http://localhost:8000/alias', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'putalias');
                 assert.equal(response.statusCode, 200);
                 done();
             });
@@ -195,9 +238,50 @@ describe('Basic Routing', () => {
             });
         });
 
+        it('should accept the aliased @POST', (done) => {
+            request.post('http://localhost:8000/alias', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'postalias');
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
         it('should accept the payload', (done) => {
             let payload = {payload: 'foo'};
             request.post('http://localhost:8000/basic/payload', {json: payload}, (err, response, body) => {
+                assert.equal(err, null);
+                assert.deepEqual(body, payload);
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
+    });
+
+    describe('PATCH', () => {
+
+        it('should PATCH', (done) => {
+            request.patch('http://localhost:8000/basic', {}, (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'patch');
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
+        it('should accept the aliased @PATCH', (done) => {
+            request.patch('http://localhost:8000/alias', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'patchalias');
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
+        it('should accept the payload', (done) => {
+            let payload = {payload: 'foo'};
+            request.patch('http://localhost:8000/basic/payload', {json: payload}, (err, response, body) => {
                 assert.equal(err, null);
                 assert.deepEqual(body, payload);
                 assert.equal(response.statusCode, 200);
@@ -213,6 +297,15 @@ describe('Basic Routing', () => {
             request.delete('http://localhost:8000/basic', (err, response, body) => {
                 assert.equal(err, null);
                 assert.equal(body, 'delete');
+                assert.equal(response.statusCode, 200);
+                done();
+            });
+        });
+
+        it('should accept the aliased @GET', (done) => {
+            request.delete('http://localhost:8000/alias', (err, response, body) => {
+                assert.equal(err, null);
+                assert.equal(body, 'deletealias');
                 assert.equal(response.statusCode, 200);
                 done();
             });

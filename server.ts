@@ -5,10 +5,9 @@ let express = require('express');
 import {Reflect} from 'restkit/reflect';
 import {RestkitServer} from 'restkit/server';
 import {RestkitRouter} from 'restkit/router';
-import {IRoute, Response, ResponseService} from 'restkit/route';
-import {RuleService} from 'restkit/rule';
-import {InjectorService} from 'restkit/injector';
-import {DTOManager} from 'restkit/dto';
+import {IRoute} from 'restkit/route';
+import {Response} from 'restkit/response';
+import {RouteManager} from 'restkit/route';
 
 import {ExpressRouter} from './router';
 
@@ -41,29 +40,13 @@ export class ExpressServer extends RestkitServer {
   
   public getRequestHandler(route: IRoute): Function {
     return (ctx: any, expressResponse: any) => {
-      let rules = Reflect.getMetadata('Rules', route.object, route.key) || [];
-
-      return RuleService.runRules(rules, ctx).then(() => {
-        return InjectorService.run(route.object, route.key, ctx).then((response: Response) => {
-          return this.sendResponse(route, expressResponse, ResponseService.convertSuccessResponse(response));
-        }).catch((response: Response) => {
-          return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
-        });
-      }).catch((response: Response) => {
-        return this.sendResponse(route, expressResponse, ResponseService.convertErrorResponse(response));
+      RouteManager.runRoute(route, ctx).then((response: Response) => {
+        this.sendResponse(route, expressResponse, response);
       });
     }
   }
   
   public sendResponse(route: IRoute, expressResponse: any, response: Response) {
-    let object = route.object;
-    let key = route.key;
-
-    let responseType = Reflect.getMetadata('ResponseType', object, key);
-    if(responseType) {
-      DTOManager.scrubOut(response.data, responseType);
-    }
-    
     expressResponse.status(response.httpCode).send(response.data);
   }
 }
