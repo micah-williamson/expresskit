@@ -1,7 +1,7 @@
 {
   "name": "expresskit",
-  "version": "0.6.0",
-  "description": "Express support for Restkit",
+  "version": "0.7.0",
+  "description": "Express support for Restkit. A toolkit for node servers that adds Decorators, Rules, and Injectables.",
   "main": "bld/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "express": "^4.13.4",
-    "restkit": "^0.6.0"
+    "restkit": "^0.7.0"
   },
   "repository": {
     "type": "git",

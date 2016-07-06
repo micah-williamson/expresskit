@@ -91,7 +91,7 @@ export class UserRouter {
     }
 
     @Route('GET', '/basic/defaultresponsecode')
-    @ResponseCode(205)
+    @ResponseCode(201)
     public static getWithDefaultResponseCode() {
         return 'foo';
     }

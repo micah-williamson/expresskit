@@ -170,7 +170,7 @@ describe('Basic Routing', () => {
             request('http://localhost:8000/basic/defaultresponsecode', (err, response, body) => {
                 assert.equal(err, null);
                 assert.equal(body, 'foo');
-                assert.equal(response.statusCode, 205);
+                assert.equal(response.statusCode, 201);
                 done();
             });
         });
