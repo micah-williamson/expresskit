@@ -90,4 +90,10 @@ export class RuleRouter {
     return 'foo';
   }
 
+  @Route('GET', '/rules/invalid')
+  @Rule('InvalidRule')
+  public static invalidRule() {
+    return 'foo';
+  }
+
 }

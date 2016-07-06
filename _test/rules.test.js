@@ -1,5 +1,3 @@
-require('./bld/route/response.js');
-
 let request = require('request');
 let assert = require('chai').assert;
 
@@ -38,6 +36,15 @@ describe('Rules', () => {
         done();
       });
 
+    });
+
+    it('should error if the rule doesnt exist', (done) => {
+      request('http://localhost:8000/rules/invalid', (err, response, body) => {
+        assert.equal(err, null);
+        assert.equal(body, `Rule 'InvalidRule' doesn't exist.`);
+        assert.equal(response.statusCode, 500);
+        done();
+      });
     });
 
   });

@@ -1,5 +1,3 @@
-require('./bld/route/response.js');
-
 let request = require('request');
 let assert = require('chai').assert;
 

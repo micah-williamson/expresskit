@@ -28,9 +28,23 @@ export class UserRouter {
 }
 ```
 
+## Keep Reading
+
+[Routing](https://github.com/iamchairs/restkit/route/README.md)
+
+[Response](https://github.com/iamchairs/restkit/response/README.md)
+
+[Middleware](https://github.com/iamchairs/restkit/middleware/README.md)
+
+[Resources](https://github.com/iamchairs/restkit/resource/README.md)
+
+[Rules](https://github.com/iamchairs/restkit/rule/README.md)
+
+[DTOs](https://github.com/iamchairs/restkit/dto/README.md)
+
 ## More Links
 
-[Restkit](https://github.com/iamchairs/restkit)
+[Restkit Seed Project](https://github.com/iamchairs/restkit-seed)
 
 [Github](https://github.com/iamchairs/expresskit)
 
